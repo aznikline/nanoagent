@@ -44,15 +44,15 @@
 ### 架构分层
 
 ```text
-┌────────────────────────────────────────┐
-│  1. LLM 客户端初始化                    │
-├────────────────────────────────────────┤
+┌──────────────────────────────────────────┐
+│  1. LLM 客户端初始化                     │
+├──────────────────────────────────────────┤
 │  2. 工具定义（Tool Schema，JSON 说明书） │
-├────────────────────────────────────────┤
+├──────────────────────────────────────────┤
 │  3. 工具实现（Python 函数）              │
-├────────────────────────────────────────┤
-│  4. Agent 循环（Core Loop）             │
-└────────────────────────────────────────┘
+├──────────────────────────────────────────┤
+│  4. Agent 循环（Core Loop）              │
+└──────────────────────────────────────────┘
 ```
 
 ### 三个工具
@@ -139,11 +139,11 @@ def run_agent(user_message, max_iterations=5):
 
 ```text
 ReAct（第一篇）            Plan-then-Execute（第二篇）
-
-思考 → 行动 → 观察         先规划（全局思考）
-  ↑         │                    │
-  └─────────┘           步骤1 → 步骤2 → 步骤3
-                         (每步内部仍是 ReAct)
+                                                      
+思考 → 行动 → 观察         先规划（全局思考）         
+  ↑         │                    │                    
+  └─────────┘           步骤1 → 步骤2 → 步骤3         
+                         (每步内部仍是 ReAct)         
 ```
 
 ---
@@ -386,36 +386,36 @@ class Team:
 ### 四阶段协作流程
 
 ```text
-第 1 阶段：PM 规划团队（LLM 根据任务自动决定需要哪些角色）
-  ┌─────────────────────────────────────┐
-  │ 任务：创建 TODO 应用                  │
-  │ 规划结果：                           │
-  │   alice — backend developer         │
-  │   bob   — frontend developer        │
-  │   carol — reviewer                  │
-  └─────────────────────────────────────┘
-
-第 2 阶段：招募（hire）
-  team.hire("alice", "backend developer")
-  team.hire("bob",   "frontend developer")
-  team.hire("carol", "reviewer")
-
-第 3 阶段：协作开发（逐个 chat，完成后广播成果）
-  alice.chat("写 Flask TODO API")
-    → 创建 app.py
-    → broadcast: "我完成了后端 API，接口在 /todos"
-
+第 1 阶段：PM 规划团队（LLM 根据任务自动决定需要哪些角色）    
+  ┌─────────────────────────────────────┐                     
+  │ 任务：创建 TODO 应用                  │                   
+  │ 规划结果：                           │                    
+  │   alice — backend developer         │                     
+  │   bob   — frontend developer        │                     
+  │   carol — reviewer                  │                     
+  └─────────────────────────────────────┘                     
+                                                              
+第 2 阶段：招募（hire）                                       
+  team.hire("alice", "backend developer")                     
+  team.hire("bob",   "frontend developer")                    
+  team.hire("carol", "reviewer")                              
+                                                              
+第 3 阶段：协作开发（逐个 chat，完成后广播成果）              
+  alice.chat("写 Flask TODO API")                             
+    → 创建 app.py                                             
+    → broadcast: "我完成了后端 API，接口在 /todos"            
+                                                              
   bob.chat("写 HTML 前端")    ← bob 的 inbox 已有 alice 的广播
-    → 先消化 inbox（知道了 API 地址）
-    → 创建 index.html（直接对接正确的 API）
-    → broadcast: "前端完成"
-
-  carol.chat("最终审查")      ← carol 的 inbox 有所有人的广播
-    → 先消化 inbox（了解全局进展）
-    → 做 code review，输出审查报告
-
-第 4 阶段：解散
-  team.disband()
+    → 先消化 inbox（知道了 API 地址）                         
+    → 创建 index.html（直接对接正确的 API）                   
+    → broadcast: "前端完成"                                   
+                                                              
+  carol.chat("最终审查")      ← carol 的 inbox 有所有人的广播 
+    → 先消化 inbox（了解全局进展）                            
+    → 做 code review，输出审查报告                            
+                                                              
+第 4 阶段：解散                                               
+  team.disband()                                              
 ```
 
 ---
@@ -423,11 +423,11 @@ class Team:
 ### 通信机制详解
 
 ```text
-点对点（send）              广播（broadcast）
-─────────────────          ──────────────────────────────
-alice → bob               alice → [bob, carol, dave, ...]
+点对点（send）              广播（broadcast）             
+─────────────────          ────────────────────────────── 
+alice → bob               alice → [bob, carol, dave, ...] 
   仅 bob 的 inbox          所有人的 inbox（除 alice 自己）
-  适合：传递特定信息         适合：同步全局进展
+  适合：传递特定信息         适合：同步全局进展           
 ```
 
 **消息在什么时候被处理？**
@@ -460,15 +460,15 @@ alice.chat("给后端写单测")   # alice.messages 已有 20 条上下文
 ### 生命周期时序图
 
 ```text
-时间轴 →
-
-alice:  [hire]──[chat:写后端]──────[broadcast]──[chat:修bug]──[disband]
-                                       │
-bob:    [hire]──────────────[inbox]──[chat:写前端]──[broadcast]──[disband]
-                                                        │
+时间轴 →                                                                   
+                                                                           
+alice:  [hire]──[chat:写后端]──────[broadcast]──[chat:修bug]──[disband]    
+                                       │                                   
+bob:    [hire]──────────────[inbox]──[chat:写前端]──[broadcast]──[disband] 
+                                                        │                  
 carol:  [hire]──────────────────────────────[inbox]──[chat:审查]──[disband]
-
-                            ↑ 信息在这里流动，每个 Agent 的记忆独立累积
+                                                                           
+                            ↑ 信息在这里流动，每个 Agent 的记忆独立累积    
 ```
 
 ---
@@ -549,22 +549,22 @@ def compact_messages(messages, keep_recent=6, threshold=20):
 ### 三道防线
 
 ```text
-LLM 输出一条命令
-  │
-  ▼
-防线 1: 命令黑名单
-  │  "rm -rf /"  → 🚫 直接拦截
-  │  "ls -la"    → ✅ 通过
-  ▼
-防线 2: 用户确认
-  │  "这个命令安全吗？[y/N]"
-  │  用户说 N   → 🚫 拒绝执行
-  │  用户说 y   → ✅ 通过
-  ▼
-防线 3: 输出截断
+LLM 输出一条命令                                
+  │                                             
+  ▼                                             
+防线 1: 命令黑名单                              
+  │  "rm -rf /"  → 🚫 直接拦截                  
+  │  "ls -la"    → ✅ 通过                      
+  ▼                                             
+防线 2: 用户确认                                
+  │  "这个命令安全吗？[y/N]"                    
+  │  用户说 N   → 🚫 拒绝执行                   
+  │  用户说 y   → ✅ 通过                       
+  ▼                                             
+防线 3: 输出截断                                
   │  结果超过 5000 字符 → 截断，防止撑爆 context
-  ▼
-真正执行
+  ▼                                             
+真正执行                                        
 ```
 
 ### Hook 管道架构
@@ -621,24 +621,24 @@ def execute_with_hooks(tool_name, args, func):
 ### 一张图看清 Model vs Harness
 
 ```text
-┌─────────────────────────────────────────────────────┐
+┌───────────────────────────────────────────────────────┐
 │                    Harness                            │
 │                                                       │
-│  Rules / Skills / MCP Tools                          │
-│         ↓                                            │
+│  Rules / Skills / MCP Tools                           │
+│         ↓                                             │
 │  System Prompt + 工具列表                             │
 │  Memory（第二篇）+ Compaction（第六篇）               │
-│         ↓                                            │
-│      ┌─────────┐                                     │
+│         ↓                                             │
+│      ┌─────────┐                                      │
 │      │  Model  │  ← 模型只管思考和决策                │
-│      └─────────┘                                     │
-│         ↓                                            │
+│      └─────────┘                                      │
+│         ↓                                             │
 │  Hook 管道（第七篇）：黑名单 → 用户确认 → 执行        │
-│         ↓                                            │
+│         ↓                                             │
 │  工具执行层（第一篇）：bash / read / write            │
-│         ↓                                            │
+│         ↓                                             │
 │  协作层（第四、五篇）：SubAgent / Teams               │
-└─────────────────────────────────────────────────────┘
+└───────────────────────────────────────────────────────┘
 ```
 
 ### 为什么 Harness 概念重要？
@@ -668,30 +668,30 @@ Agent = Model + Harness
 ## 十一、架构演进全景
 
 ```text
-┌──────────────────────────────────────────────────────────┐
-│                    Agent 完整架构                          │
-│                                                           │
-│  ┌──────────────┐  第七篇：agent-safe.py                  │
-│  │  安全防线     │  黑名单 + 用户确认 + 输出截断 + Hook     │
-│  ├──────────────┤  第六篇：agent-compact.py               │
-│  │  上下文压缩   │  Compaction，对抗 context window 上限   │
-│  ├──────────────┤  第五篇：agent-teams.py                 │
-│  │  Teams       │  持久身份 + 通信通道 + 生命周期管理       │
-│  ├──────────────┤  第四篇：agent-subagent.py              │
+┌──────────────────────────────────────────────────────────────┐
+│                    Agent 完整架构                            │
+│                                                              │
+│  ┌──────────────┐  第七篇：agent-safe.py                     │
+│  │  安全防线     │  黑名单 + 用户确认 + 输出截断 + Hook      │
+│  ├──────────────┤  第六篇：agent-compact.py                  │
+│  │  上下文压缩   │  Compaction，对抗 context window 上限     │
+│  ├──────────────┤  第五篇：agent-teams.py                    │
+│  │  Teams       │  持久身份 + 通信通道 + 生命周期管理        │
+│  ├──────────────┤  第四篇：agent-subagent.py                 │
 │  │  SubAgent    │  一次性委派，独立上下文，分工干活          │
-│  ├──────────────┤  第三篇：agent-skills-mcp.py            │
-│  │  Rules       │  行为约束层 → .agent/rules/             │
-│  │  Skills      │  技能知识层 → .agent/skills/            │
-│  │  MCP         │  工具扩展层 → .agent/mcp.json           │
-│  ├──────────────┤  第二篇：agent-memory.py                │
-│  │  Memory      │  持久记忆层 → agent_memory.md           │
-│  │  Planning    │  任务分解层 → Plan-then-Execute          │
-│  ├──────────────┤  第一篇：agent-essence.py               │
-│  │  LLM         │  推理决策层 → OpenAI API                │
-│  │  Tools       │  工具执行层 → bash / read / write       │
-│  │  Loop        │  核心循环层 → for + tool_calls          │
-│  └──────────────┘                                         │
-└──────────────────────────────────────────────────────────┘
+│  ├──────────────┤  第三篇：agent-skills-mcp.py               │
+│  │  Rules       │  行为约束层 → .agent/rules/                │
+│  │  Skills      │  技能知识层 → .agent/skills/               │
+│  │  MCP         │  工具扩展层 → .agent/mcp.json              │
+│  ├──────────────┤  第二篇：agent-memory.py                   │
+│  │  Memory      │  持久记忆层 → agent_memory.md              │
+│  │  Planning    │  任务分解层 → Plan-then-Execute            │
+│  ├──────────────┤  第一篇：agent-essence.py                  │
+│  │  LLM         │  推理决策层 → OpenAI API                   │
+│  │  Tools       │  工具执行层 → bash / read / write          │
+│  │  Loop        │  核心循环层 → for + tool_calls             │
+│  └──────────────┘                                            │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 | 篇 | 核心主题 | 一句话总结 |
