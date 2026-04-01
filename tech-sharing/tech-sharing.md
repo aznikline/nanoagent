@@ -1,6 +1,6 @@
 # 技术分享：从零开始理解 Agent
 
-> **nanoAgent 系列** —— 7 篇正文 + 1 篇番外，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
+> **nanoagent 系列** —— 7 篇正文 + 1 篇番外，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
 >
 > 项目目录：本仓库根目录
 
@@ -43,7 +43,7 @@
 
 ### 架构分层
 
-```
+```text
 ┌────────────────────────────────────────┐
 │  1. LLM 客户端初始化                    │
 ├────────────────────────────────────────┤
@@ -94,7 +94,7 @@ def run_agent(user_message, max_iterations=5):
 
 ### 运行时序示例
 
-```
+```text
 用户: "统计 Python 文件数，写入 count.txt"
 
 第 1 轮 → LLM 返回 tool_call: execute_bash("find . -name '*.py' | wc -l")
@@ -120,7 +120,7 @@ def run_agent(user_message, max_iterations=5):
 
 ### 记忆的本质
 
-```
+```text
 写入：任务完成后 → save_memory() → 追加到 agent_memory.md
 读取：下次启动时 → load_memory() → 只取最后 50 行（滑动窗口）
 注入：拼接到 system prompt → "Previous context: ..."
@@ -137,7 +137,7 @@ def run_agent(user_message, max_iterations=5):
 
 ### 两种规划范式
 
-```
+```text
 ReAct（第一篇）            Plan-then-Execute（第二篇）
 
 思考 → 行动 → 观察         先规划（全局思考）
@@ -161,7 +161,7 @@ ReAct（第一篇）            Plan-then-Execute（第二篇）
 
 ### System Prompt 的组装公式
 
-```
+```text
 最终 system prompt = 基础指令 + Rules（项目规则）+ Skills（技能描述）+ Memory（历史记忆）
 ```
 
@@ -184,14 +184,14 @@ all_tools = base_tools + mcp_tools  # 一行代码搞定合并
 
 MCP（Model Context Protocol）解决的核心问题：
 
-```
+```text
 没有 MCP：每个 Agent 各写各的工具，N×M 的工作量
 有  MCP：工具实现一次，所有 Agent 共享，N+M 的工作量
 ```
 
 ### 能力的两个正交维度
 
-```
+```text
 prompt 维度（知道什么）：Rules + Skills + Memory
 tools  维度（能做什么）：base_tools + MCP tools
 ```
@@ -206,7 +206,7 @@ tools  维度（能做什么）：base_tools + MCP tools
 
 ### SubAgent 的生命周期
 
-```
+```text
 生成 → 接收任务 → 干活（可以调用工具）→ 返回结果摘要 → 消亡
 ```
 
@@ -258,7 +258,7 @@ def subagent(role, task):
 
 第四篇的 SubAgent 已经能分工，但有三个根本缺陷：
 
-```
+```text
 问题 1: SubAgent 没有记忆
   主 Agent 调用 subagent("dev", "写后端") → 完成
   主 Agent 再调用 subagent("dev", "优化后端") → 已经忘记之前写了什么
@@ -289,7 +289,7 @@ def subagent(role, task):
 
 ### 三大核心能力
 
-```
+```text
 能力 1: 持久记忆（Persistent Memory）
   → Agent.messages 是一个列表，每次 chat() 都往里追加
   → 第二次调用时，Agent 还记得第一次做了什么
@@ -385,7 +385,7 @@ class Team:
 
 ### 四阶段协作流程
 
-```
+```text
 第 1 阶段：PM 规划团队（LLM 根据任务自动决定需要哪些角色）
   ┌─────────────────────────────────────┐
   │ 任务：创建 TODO 应用                  │
@@ -422,7 +422,7 @@ class Team:
 
 ### 通信机制详解
 
-```
+```text
 点对点（send）              广播（broadcast）
 ─────────────────          ──────────────────────────────
 alice → bob               alice → [bob, carol, dave, ...]
@@ -432,7 +432,7 @@ alice → bob               alice → [bob, carol, dave, ...]
 
 **消息在什么时候被处理？**
 
-```
+```text
 agent.receive()  →  消息进入 inbox（只是存储，不立即处理）
 agent.chat()     →  先看 inbox，消化后再执行新任务
                     → 这样 Agent 能在执行任务前，先了解团队最新动态
@@ -459,7 +459,7 @@ alice.chat("给后端写单测")   # alice.messages 已有 20 条上下文
 
 ### 生命周期时序图
 
-```
+```text
 时间轴 →
 
 alice:  [hire]──[chat:写后端]──────[broadcast]──[chat:修bug]──[disband]
@@ -501,7 +501,7 @@ carol:  [hire]──────────────────────
 
 ### 问题：messages 会无限增长
 
-```
+```text
 每轮循环 messages += [LLM回复, 工具返回结果]
 → 读几个大文件 + 几次 grep
 → 很快撑爆 context window
@@ -511,7 +511,7 @@ carol:  [hire]──────────────────────
 
 ### 解决方案：Compaction（压缩）
 
-```
+```text
 压缩前：
   [system][user][tool×15][assistant×15]  ← 越来越长
 
@@ -548,7 +548,7 @@ def compact_messages(messages, keep_recent=6, threshold=20):
 
 ### 三道防线
 
-```
+```text
 LLM 输出一条命令
   │
   ▼
@@ -620,7 +620,7 @@ def execute_with_hooks(tool_name, args, func):
 
 ### 一张图看清 Model vs Harness
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │                    Harness                            │
 │                                                       │
@@ -658,7 +658,7 @@ def execute_with_hooks(tool_name, args, func):
 
 读完这七篇，你已经亲手搭过 Harness 的完整核心骨架，只是之前没有这个名字。
 
-```
+```text
 Agent = Model + Harness
       = Model + 你写的那 507 行代码
 ```
@@ -667,7 +667,7 @@ Agent = Model + Harness
 
 ## 十一、架构演进全景
 
-```
+```text
 ┌──────────────────────────────────────────────────────────┐
 │                    Agent 完整架构                          │
 │                                                           │

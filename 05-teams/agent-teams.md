@@ -1,6 +1,6 @@
 # 从零开始理解 Agent（五）：从临时工到正式团队——多智能体协作与编排
 
-> **「从零开始理解 Agent」系列** —— 从一个极简开源项目 nanoAgent 出发，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
+> **「从零开始理解 Agent」系列** —— 从一个极简开源项目 nanoagent 出发，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
 >
 > - [第一篇：底层原理，只有 100 行](../01-essence/agent-essence.md) —— 工具 + 循环
 > - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 182 行
@@ -178,7 +178,7 @@ def run_team(task):
 
 用一个具体例子来说明。假设输入 "创建一个 TODO 应用，包含 Python 后端和 HTML 前端"：
 
-```
+```text
 [PM] 分析任务，组建团队...
 [团队] 3 人:
   1. alice — backend developer → 用 FastAPI 创建 TODO 后端 API

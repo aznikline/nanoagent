@@ -1,6 +1,6 @@
 # 从零开始理解 Agent（六）：Agent 的一次断舍离——上下文压缩
 
-> **「从零开始理解 Agent」系列** —— 从一个极简开源项目 nanoAgent 出发，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
+> **「从零开始理解 Agent」系列** —— 从一个极简开源项目 nanoagent 出发，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
 >
 > - [第一篇：底层原理，只有 100 行](../01-essence/agent-essence.md) —— 工具 + 循环
 > - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 182 行
@@ -22,7 +22,7 @@
 
 回忆第一篇中 Agent 的核心循环。每一轮循环，`messages` 列表都会新增至少两条消息：
 
-```
+```text
 第 1 轮: messages += [LLM的回复, 工具的返回结果]
 第 2 轮: messages += [LLM的回复, 工具的返回结果]
 第 3 轮: messages += [LLM的回复, 工具的返回结果]
@@ -59,7 +59,7 @@
 
 ## 三、压缩的原理：一张图看懂
 
-```
+```text
 压缩前的 messages（30 条，快爆了）:
 ┌────────┐
 │ system │ ← 永远保留
@@ -196,7 +196,7 @@ def run_agent(user_message, max_iterations=30):
 
 以下是测试中观察到的 messages 数量变化（阈值设为 10）：
 
-```
+```text
 轮次 1: messages = 2   (system + user)
 轮次 2: messages = 4   (+ assistant + tool)
 轮次 3: messages = 6
@@ -219,7 +219,7 @@ messages 数量像锯齿波一样：涨到阈值 → 压缩回去 → 继续涨 
 会。但关键是**丢的是细节，不是要点**。
 
 比如原始历史中有：
-```
+```text
 [tool]: $ find . -name "*.py" | head -20
 ./src/utils.py
 ./src/main.py
@@ -230,7 +230,7 @@ messages 数量像锯齿波一样：涨到阈值 → 压缩回去 → 继续涨 
 ```
 
 压缩后摘要可能变成：
-```
+```text
 在当前目录下找到了 20 个 Python 文件，分布在 src/ 和 tests/ 两个目录中。
 ```
 
@@ -240,9 +240,9 @@ messages 数量像锯齿波一样：涨到阈值 → 压缩回去 → 继续涨 
 
 ---
 
-## 七、压缩方案的对比：nanoAgent vs 业界
+## 七、压缩方案的对比：nanoagent vs 业界
 
-nanoAgent 的压缩是最朴素的实现。业界的方案更加精细：
+nanoagent 的压缩是最朴素的实现。业界的方案更加精细：
 
 | 维度 | agent-compact.py | OpenClaw / Claude Code 等生产级实现 |
 |------|-----------------|-------------------------------------|

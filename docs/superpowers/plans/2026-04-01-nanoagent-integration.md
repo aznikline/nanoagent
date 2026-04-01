@@ -88,8 +88,8 @@ git -C /Users/wizout/op/nanoagent commit -m "chore: import nanoagent snapshot"
 ### Task 2: Preserve The Upstream Readmes And Install The Local Entry Point
 
 **Files:**
-- Create: `/Users/wizout/op/nanoagent/README.series.md`
-- Create: `/Users/wizout/op/nanoagent/README.series.zh-CN.md`
+- Create: `/Users/wizout/op/nanoagent/README.md`
+- Create: `/Users/wizout/op/nanoagent/README_CN.md`
 - Modify: `/Users/wizout/op/nanoagent/README.md`
 
 - [ ] **Step 1: Verify the imported guide files contain the expected source content**
@@ -104,8 +104,8 @@ Expected: the imported files still contain the guide headers and intro text.
 - [ ] **Step 2: Preserve the guide files under explicit filenames**
 
 ```bash
-cp /Users/wizout/op/nanoagent/README.md /Users/wizout/op/nanoagent/README.series.md
-cp /Users/wizout/op/nanoagent/README_CN.md /Users/wizout/op/nanoagent/README.series.zh-CN.md
+cp /Users/wizout/op/nanoagent/README.md /Users/wizout/op/nanoagent/README.md
+cp /Users/wizout/op/nanoagent/README_CN.md /Users/wizout/op/nanoagent/README_CN.md
 ```
 
 - [ ] **Step 3: Replace `README.md` with the local integration entrypoint**
@@ -136,8 +136,8 @@ cp /Users/wizout/op/nanoagent/README_CN.md /Users/wizout/op/nanoagent/README.ser
 
 ### 路径二：按本地整理内容学习
 
-- `docs/summary/nanoagent-study-notes.zh-CN.md`
-- `docs/summary/nanoagent-architecture.zh-CN.md`
+- `docs/integration-thinking/chapter-notes.zh-CN.md`
+- `docs/integration-thinking/architecture.zh-CN.md`
 
 ## 运行
 
@@ -149,8 +149,8 @@ python full/agent-full.py "重构 hello.py，添加类型注解和单元测试"
 
 ## 对照资料
 
-- 系列英文导读：`README.series.md`
-- 系列中文说明：`README.series.zh-CN.md`
+- 系列英文导读：`README.md`
+- 系列中文说明：`README_CN.md`
 
 ## 已知事项
 
@@ -161,8 +161,8 @@ python full/agent-full.py "重构 hello.py，添加类型注解和单元测试"
 - [ ] **Step 4: Verify the new entrypoint and preserved copies**
 
 ```bash
-test -f /Users/wizout/op/nanoagent/README.series.md
-test -f /Users/wizout/op/nanoagent/README.series.zh-CN.md
+test -f /Users/wizout/op/nanoagent/README.md
+test -f /Users/wizout/op/nanoagent/README_CN.md
 grep -n "本地整合仓库" /Users/wizout/op/nanoagent/README.md
 ```
 
@@ -171,22 +171,22 @@ Expected: preserved copies exist and the new main README contains the local inte
 - [ ] **Step 5: Commit the repository entrypoint split**
 
 ```bash
-git -C /Users/wizout/op/nanoagent add README.md README.series.md README.series.zh-CN.md
+git -C /Users/wizout/op/nanoagent add README.md README.md README_CN.md
 git -C /Users/wizout/op/nanoagent commit -m "docs: add local nanoagent entrypoint"
 ```
 
 ### Task 3: Add Chinese Study Notes And Architecture Summary
 
 **Files:**
-- Create: `/Users/wizout/op/nanoagent/docs/summary/nanoagent-study-notes.zh-CN.md`
-- Create: `/Users/wizout/op/nanoagent/docs/summary/nanoagent-architecture.zh-CN.md`
+- Create: `/Users/wizout/op/nanoagent/docs/integration-thinking/chapter-notes.zh-CN.md`
+- Create: `/Users/wizout/op/nanoagent/docs/integration-thinking/architecture.zh-CN.md`
 
 - [ ] **Step 1: Create the summary directory and verify it is absent before writing**
 
 ```bash
-mkdir -p /Users/wizout/op/nanoagent/docs/summary
-test -f /Users/wizout/op/nanoagent/docs/summary/nanoagent-study-notes.zh-CN.md && echo "unexpected: notes exists" || echo "ok: notes missing before write"
-test -f /Users/wizout/op/nanoagent/docs/summary/nanoagent-architecture.zh-CN.md && echo "unexpected: architecture summary exists" || echo "ok: architecture summary missing before write"
+mkdir -p /Users/wizout/op/nanoagent/docs/integration-thinking
+test -f /Users/wizout/op/nanoagent/docs/integration-thinking/chapter-notes.zh-CN.md && echo "unexpected: notes exists" || echo "ok: notes missing before write"
+test -f /Users/wizout/op/nanoagent/docs/integration-thinking/architecture.zh-CN.md && echo "unexpected: architecture summary exists" || echo "ok: architecture summary missing before write"
 ```
 
 - [ ] **Step 2: Write the study notes document**
@@ -290,10 +290,10 @@ test -f /Users/wizout/op/nanoagent/docs/summary/nanoagent-architecture.zh-CN.md 
 - [ ] **Step 4: Verify summary documents are linked and readable**
 
 ```bash
-test -f /Users/wizout/op/nanoagent/docs/summary/nanoagent-study-notes.zh-CN.md
-test -f /Users/wizout/op/nanoagent/docs/summary/nanoagent-architecture.zh-CN.md
-grep -n "docs/summary/nanoagent-study-notes.zh-CN.md" /Users/wizout/op/nanoagent/README.md
-grep -n "递进式能力栈" /Users/wizout/op/nanoagent/docs/summary/nanoagent-architecture.zh-CN.md
+test -f /Users/wizout/op/nanoagent/docs/integration-thinking/chapter-notes.zh-CN.md
+test -f /Users/wizout/op/nanoagent/docs/integration-thinking/architecture.zh-CN.md
+grep -n "docs/integration-thinking/chapter-notes.zh-CN.md" /Users/wizout/op/nanoagent/README.md
+grep -n "递进式能力栈" /Users/wizout/op/nanoagent/docs/integration-thinking/architecture.zh-CN.md
 ```
 
 Expected: both documents exist and the main README references them.
@@ -301,7 +301,7 @@ Expected: both documents exist and the main README references them.
 - [ ] **Step 5: Commit the local summary layer**
 
 ```bash
-git -C /Users/wizout/op/nanoagent add docs/summary
+git -C /Users/wizout/op/nanoagent add docs/integration-thinking
 git -C /Users/wizout/op/nanoagent commit -m "docs: add nanoagent study summaries"
 ```
 
@@ -350,10 +350,10 @@ git -C /Users/wizout/op/nanoagent commit -m "chore: add local repository hygiene
 
 **Files:**
 - Modify: `/Users/wizout/op/nanoagent/README.md`
-- Modify: `/Users/wizout/op/nanoagent/README.series.md`
-- Modify: `/Users/wizout/op/nanoagent/README.series.zh-CN.md`
-- Modify: `/Users/wizout/op/nanoagent/docs/summary/nanoagent-study-notes.zh-CN.md`
-- Modify: `/Users/wizout/op/nanoagent/docs/summary/nanoagent-architecture.zh-CN.md`
+- Modify: `/Users/wizout/op/nanoagent/README.md`
+- Modify: `/Users/wizout/op/nanoagent/README_CN.md`
+- Modify: `/Users/wizout/op/nanoagent/docs/integration-thinking/chapter-notes.zh-CN.md`
+- Modify: `/Users/wizout/op/nanoagent/docs/integration-thinking/architecture.zh-CN.md`
 - Modify: `/Users/wizout/op/nanoagent/.gitignore`
 
 - [ ] **Step 1: Run the fastest structure and documentation checks**
@@ -372,10 +372,10 @@ python3 - <<'PY'
 from pathlib import Path
 paths = [
     Path('/Users/wizout/op/nanoagent/README.md'),
-    Path('/Users/wizout/op/nanoagent/README.series.md'),
-    Path('/Users/wizout/op/nanoagent/README.series.zh-CN.md'),
-    Path('/Users/wizout/op/nanoagent/docs/summary/nanoagent-study-notes.zh-CN.md'),
-    Path('/Users/wizout/op/nanoagent/docs/summary/nanoagent-architecture.zh-CN.md'),
+    Path('/Users/wizout/op/nanoagent/README.md'),
+    Path('/Users/wizout/op/nanoagent/README_CN.md'),
+    Path('/Users/wizout/op/nanoagent/docs/integration-thinking/chapter-notes.zh-CN.md'),
+    Path('/Users/wizout/op/nanoagent/docs/integration-thinking/architecture.zh-CN.md'),
 ]
 for path in paths:
     text = path.read_text()

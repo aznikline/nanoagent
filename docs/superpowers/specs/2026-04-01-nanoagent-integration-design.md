@@ -59,10 +59,10 @@ These directories form the original learning path and should remain easy to comp
 These locally authored files and directories should be added:
 
 - `README.md`
-- `README.series.md`
-- `docs/summary/`
-- `docs/summary/nanoagent-study-notes.zh-CN.md`
-- `docs/summary/nanoagent-architecture.zh-CN.md`
+- `README.md`
+- `docs/integration-thinking/`
+- `docs/integration-thinking/chapter-notes.zh-CN.md`
+- `docs/integration-thinking/architecture.zh-CN.md`
 - `.gitignore`
 
 Optional lightweight engineering helpers may be added only if they remain minimal and clearly useful:
@@ -89,7 +89,7 @@ These helpers are optional because the integration goal is clarity, not heavy re
 
 ### Upstream README Preservation
 
-The series guide content should be preserved under `README.series.md` rather than discarded.
+The series guide content should be preserved under `README.md` rather than discarded.
 
 This keeps the original framing available without forcing the local repository to use the series guide as its main entrypoint.
 
@@ -97,7 +97,7 @@ This keeps the original framing available without forcing the local repository t
 
 Two new Chinese summary documents should be authored:
 
-#### `docs/summary/nanoagent-study-notes.zh-CN.md`
+#### `docs/integration-thinking/chapter-notes.zh-CN.md`
 
 This file should contain:
 
@@ -107,7 +107,7 @@ This file should contain:
 - practical takeaways;
 - local reflections on strengths, limitations, and transferability.
 
-#### `docs/summary/nanoagent-architecture.zh-CN.md`
+#### `docs/integration-thinking/architecture.zh-CN.md`
 
 This file should contain:
 
