@@ -7,7 +7,6 @@
 ## 这份整合做了什么
 
 - 保留章节目录和代码文件，方便按原教程路径阅读
-- 保留系列导读和说明文档作为参考资料
 - 新增本地中文学习笔记和架构总结
 - 明确记录已观察到的一致性问题，而不是直接改写原始内容
 
@@ -82,11 +81,6 @@ python 01-essence/agent-essence.py "列出当前目录下所有 Python 文件"
 python 02-memory/agent-memory.py "统计代码行数并记住结果"
 python full/agent-full.py "重构 hello.py，添加类型注解和单元测试"
 ```
-
-## 参考资料
-
-- 系列导读：`README.series.md`
-- 系列说明：`README.series.zh-CN.md`
 
 ## 已知事项
 
