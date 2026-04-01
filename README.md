@@ -1,106 +1,99 @@
-# 从零开始理解 Agent —— 系列导读
+# nanoagent
 
-[English](./README_CN.md) | 中文
+这是一个对上游 [GitHubxsy/nanoAgent](https://github.com/GitHubxsy/nanoAgent) 的本地整合仓库。
 
-> 通过一个极简开源项目 [nanoAgent](https://github.com/GitHubxsy/nanoAgent)，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
+目标不是重写上游，而是在完整保留其教程结构的前提下，补一层更适合二次学习和归档的本地整理内容。
 
----
+## 这份整合做了什么
 
-## 这个系列讲什么
+- 保留上游章节目录和代码文件，方便按原教程路径阅读
+- 保留上游中英文 README 作为对照资料
+- 新增本地中文学习笔记和架构总结
+- 明确记录已观察到的上游一致性问题，而不是直接改写原始内容
 
-很多人会用 ChatGPT，但不理解 Agent。这个系列从一个仅 **103 行**的极简实现出发，每篇增加一个核心能力，最终搭建出涵盖记忆、规划、工具扩展、多智能体、安全等所有关键特性的完整 Agent。
+## 仓库结构
 
-**一句话总结：** Agent = LLM + 工具 + 循环。理解了这个，你就理解了 Claude Code、Cursor、Devin 的底层。
+### 上游原始层
 
----
+- `01-essence/`
+- `02-memory/`
+- `03-skills-mcp/`
+- `04-subagent/`
+- `05-teams/`
+- `06-compact/`
+- `07-safety/`
+- `full/`
+- `bonus/`
+- `nano-skill/`
+- `real-mcp/`
+- `tech-sharing/`
+- `tests/`
 
-## 七篇文章 × 七个代码文件
+### 本地整理层
 
-| # | 目录 | 文章 | 配套代码 | 行数 | 核心主题 |
-|---|------|------|----------|------|----------|
-| 01 | [01-essence/](./01-essence/) | [OpenClaw / Claude Code 的底层原理，只有 100 行](./01-essence/agent-essence.md) | [`agent-essence.py`](./01-essence/agent-essence.py) | 103 行 | 工具 + 循环，Agent 最小实现 |
-| 02 | [02-memory/](./02-memory/) | [OpenClaw / Claude Code 如何实现记忆与规划](./02-memory/agent-memory.md) | [`agent-memory.py`](./02-memory/agent-memory.py) | 206 行 | 持久记忆、任务分解规划 |
-| 03 | [03-skills-mcp/](./03-skills-mcp/) | [OpenClaw / Claude Code 的 Rules、Skills 与 MCP 机制](./03-skills-mcp/agent-skills-mcp.md) | [`agent-skills-mcp.py`](./03-skills-mcp/agent-skills-mcp.py) | 282 行 | 行为规则、技能复用、MCP 协议 |
-| 04 | [04-subagent/](./04-subagent/) | [给 Agent 找个帮手——最简 SubAgent 实现](./04-subagent/agent-subagent.md) | [`agent-subagent.py`](./04-subagent/agent-subagent.py) | 192 行 | 一次性子智能体，任务委派 |
-| 05 | [05-teams/](./05-teams/) | [从临时工到正式团队——多智能体协作与编排](./05-teams/agent-teams.md) | [`agent-teams.py`](./05-teams/agent-teams.py) | 270 行 | 持久 Agent、身份管理、团队通信 |
-| 06 | [06-compact/](./06-compact/) | [Agent 的一次断舍离——上下文压缩](./06-compact/agent-compact.md) | [`agent-compact.py`](./06-compact/agent-compact.py) | 169 行 | 自动摘要压缩，防止 Context 爆炸 |
-| 07 | [07-safety/](./07-safety/) | [Agent 执行 rm -rf / 怎么办？三道安全防线](./07-safety/agent-safe.md) | [`agent-safe.py`](./07-safety/agent-safe.py) | 219 行 | 命令黑名单、人工确认、输出截断 |
-| — | [full/](./full/) | [七篇合一](./full/agent-full.md) | [`agent-full.py`](./full/agent-full.py) | 507 行 | 完整集成版，包含所有能力 |
+- `docs/summary/nanoagent-study-notes.zh-CN.md`
+- `docs/summary/nanoagent-architecture.zh-CN.md`
+- `docs/superpowers/specs/2026-04-01-nanoagent-integration-design.md`
+- `docs/superpowers/plans/2026-04-01-nanoagent-integration.md`
 
----
+## 阅读路径
 
-## 推荐阅读路径
+### 路径一：按上游章节学习
 
-### 路径 A：从头到尾（推荐新手）
+适合想顺着原作者思路，从最小 Agent 一路看到完整集成版的人。
 
-```
-01-essence → 02-memory → 03-skills-mcp → 04-subagent → 05-teams → 06-compact → 07-safety
-  essence.py  memory.py   skills-mcp.py    subagent.py   teams.py   compact.py   safe.py
-```
+1. `01-essence/`
+2. `02-memory/`
+3. `03-skills-mcp/`
+4. `04-subagent/`
+5. `05-teams/`
+6. `06-compact/`
+7. `07-safety/`
+8. `full/`
 
-每篇都建立在前一篇基础上，逐层添加新特性。
+### 路径二：按本地总结理解
 
-### 路径 B：按需跳入（推荐有基础的读者）
+适合想先建立整体心智模型，再回头看具体代码的人。
 
-- 只想理解 **Agent 原理** → [01-essence/](./01-essence/)
-- 想让 Agent **记住历史** → [02-memory/](./02-memory/)
-- 想接入 **MCP / 自定义工具** → [03-skills-mcp/](./03-skills-mcp/)
-- 想做 **并行任务分解** → [04-subagent/](./04-subagent/)
-- 想做 **多 Agent 协作** → [05-teams/](./05-teams/)
-- 担心 **Context 爆满** → [06-compact/](./06-compact/)
-- 担心 **Agent 搞破坏** → [07-safety/](./07-safety/)
-- 想要**一个文件搞定所有** → [full/](./full/)
+1. `docs/summary/nanoagent-architecture.zh-CN.md`
+2. `docs/summary/nanoagent-study-notes.zh-CN.md`
+3. 再回到各章节代码和文章做细读
 
-### 路径 C：只看代码
+## 快速运行
 
-每个目录下都有对应的 `.py` 文件，文件顶部 docstring 是该篇章的摘要。
-
----
-
-## 各篇章核心概念速查
-
-| 概念 | 出现篇章 | 关键代码位置 |
-|------|----------|--------------|
-| Tool Schema / Function Calling | 第一篇 | `01-essence/agent-essence.py:16-60` |
-| Agent Loop（核心循环） | 第一篇 | `01-essence/agent-essence.py:62-100` |
-| 持久记忆（Persistent Memory） | 第二篇 | `02-memory/agent-memory.py:99-117` |
-| 任务规划（Planning） | 第二篇 | `02-memory/agent-memory.py:119-142` |
-| Rules（行为规则） | 第三篇 | `03-skills-mcp/agent-skills-mcp.py:143-153` |
-| Skills（可复用技能） | 第三篇 | `03-skills-mcp/agent-skills-mcp.py:155-165` |
-| MCP 工具加载 | 第三篇 | `03-skills-mcp/agent-skills-mcp.py:167-181` |
-| SubAgent（子智能体） | 第四篇 | `04-subagent/agent-subagent.py:81-110` |
-| 多智能体通信 | 第五篇 | `05-teams/agent-teams.py` |
-| Context 压缩 | 第六篇 | `06-compact/agent-compact.py:80-123` |
-| 安全黑名单 | 第七篇 | `07-safety/agent-safe.py` |
-
----
-
-## 安装与快速上手
+先安装依赖：
 
 ```bash
-git clone https://github.com/GitHubxsy/nanoAgent.git
-cd nanoAgent
 pip install -r requirements.txt
+```
 
+再设置环境变量：
+
+```bash
 export OPENAI_API_KEY="your-key"
-export OPENAI_BASE_URL="https://api.openai.com/v1"  # 或 DeepSeek/Qwen 等
+export OPENAI_BASE_URL="https://api.openai.com/v1"
+export OPENAI_MODEL="gpt-4o-mini"
+```
 
-# 从第一篇开始
+运行示例：
+
+```bash
 python 01-essence/agent-essence.py "列出当前目录下所有 Python 文件"
-
-# 带记忆的版本
 python 02-memory/agent-memory.py "统计代码行数并记住结果"
-
-# 完整版（集成所有特性）
 python full/agent-full.py "重构 hello.py，添加类型注解和单元测试"
 ```
 
----
+## 对照资料
+
+- 上游英文导读：`README.upstream.md`
+- 上游中文说明：`README.upstream.zh-CN.md`
+
+## 已知事项
+
+- 上游仓库以教学演示为主，不等同于生产级 Agent 框架
+- 当前保留了上游测试文件，但已观察到测试与文件树存在不完全一致的情况
+- 当前环境里如果没有 `pytest`，测试命令不会直接通过，需要先补安装
 
 ## 许可证
 
-MIT
-
-────────────────────────────────────────
-
-⏺ *如同一粒种子长成森林，一个文件化作无限可能。*
+沿用上游 `LICENSE`，即 MIT。
