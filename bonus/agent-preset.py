@@ -15,7 +15,7 @@ OPENAI_API_KEY   (必须)
 OPENAI_BASE_URL  (可选)
 OPENAI_MODEL     (可选，默认 gpt-4o-mini)
 
-GitHub: https://github.com/GitHubxsy/nanoAgent
+Repository: local checkout
 """
 
 import os, sys, json

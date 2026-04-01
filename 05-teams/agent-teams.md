@@ -1,6 +1,6 @@
 # 从零开始理解 Agent（五）：从临时工到正式团队——多智能体协作与编排
 
-> **「从零开始理解 Agent」系列** —— 从一个极简开源项目 [nanoAgent](https://github.com/GitHubxsy/nanoAgent) 出发，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
+> **「从零开始理解 Agent」系列** —— 从一个极简开源项目 nanoAgent 出发，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
 >
 > - [第一篇：底层原理，只有 100 行](../01-essence/agent-essence.md) —— 工具 + 循环
 > - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 182 行
@@ -318,4 +318,4 @@ bob.chat("创建前端页面")  # bob 已经知道了 API 接口格式
 
 ---
 
-*本文基于 agent-teams.py（[GitHub 源码](https://github.com/GitHubxsy/nanoAgent/blob/main/05-teams/agent-teams.py)）分析。完整系列：[第一篇](../01-essence/agent-essence.md) → [第二篇](../02-memory/agent-memory.md) → [第三篇](../03-skills-mcp/agent-skills-mcp.md) → [第四篇](../04-subagent/agent-subagent.md) → 第五篇（本文） → [第六篇](../06-compact/agent-compact.md)*
+*本文基于 [agent-teams.py](./agent-teams.py) 分析。完整系列：[第一篇](../01-essence/agent-essence.md) → [第二篇](../02-memory/agent-memory.md) → [第三篇](../03-skills-mcp/agent-skills-mcp.md) → [第四篇](../04-subagent/agent-subagent.md) → 第五篇（本文） → [第六篇](../06-compact/agent-compact.md)*

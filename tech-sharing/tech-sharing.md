@@ -2,7 +2,7 @@
 
 > **nanoAgent 系列** —— 7 篇正文 + 1 篇番外，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
 >
-> 项目地址：[GitHubxsy/nanoAgent](https://github.com/GitHubxsy/nanoAgent)
+> 项目目录：本仓库根目录
 
 ---
 
@@ -710,8 +710,8 @@ Agent = Model + Harness
 ## 十二、动手试一试
 
 ```bash
-git clone https://github.com/GitHubxsy/nanoAgent.git
-cd nanoAgent
+git clone <your-repository-url> nanoagent
+cd nanoagent
 pip install -r requirements.txt
 
 export OPENAI_API_KEY="your-key"

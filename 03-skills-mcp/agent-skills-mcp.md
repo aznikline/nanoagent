@@ -1,6 +1,6 @@
 # 从零开始理解 Agent（三）：OpenClaw / Claude Code 的 Rules、Skills 与 MCP 机制
 
-> **「从零开始理解 Agent」系列** —— 通过一个不到 300 行的开源项目 [nanoAgent](https://github.com/GitHubxsy/nanoAgent)，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
+> **「从零开始理解 Agent」系列** —— 通过一个不到 300 行的开源项目 nanoAgent，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
 >
 > - [第一篇：底层原理，只有 100 行](../01-essence/agent-essence.md) —— 工具 + 循环
 > - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 182 行
@@ -14,7 +14,7 @@
 
 但在第二篇结尾，我们留下了三个未解之谜：工具是硬编码的，没有行为约束，规划是被动触发的。
 
-今天我们继续进化—— [agent-skills-mcp.py](https://github.com/GitHubxsy/nanoAgent/blob/main/03-skills-mcp/agent-skills-mcp.py)（265 行）。如果你用过 OpenClaw 或 Claude Code，你对 `CLAUDE.md` 规则文件、`.agent/skills/` 技能目录、MCP 工具配置一定不陌生——这些概念正是本篇要拆解的核心。agent-skills-mcp.py 在前两个版本的基础上，引入了四个新概念来回答那三个问题：
+今天我们继续进化—— [agent-skills-mcp.py](./agent-skills-mcp.py)（265 行）。如果你用过 OpenClaw 或 Claude Code，你对 `CLAUDE.md` 规则文件、`.agent/skills/` 技能目录、MCP 工具配置一定不陌生——这些概念正是本篇要拆解的核心。agent-skills-mcp.py 在前两个版本的基础上，引入了四个新概念来回答那三个问题：
 
 | 未解问题 | 解决方案 | 新概念 |
 |---------|---------|--------|
@@ -201,7 +201,7 @@ if skills:
 }
 ```
 
-> **关于 Skill 的文件格式：** 在 OpenClaw / Claude Code 的实际实现中，Skill 的标准格式是 **Markdown**（每个 Skill 目录下有一个 `SKILL.md`，里面详细描述执行步骤、最佳实践、示例代码等）。但 nanoAgent 原始仓库中采用的是 **JSON** 格式，所以代码里用 `json.load()` 来解析。这不影响理解核心思路——不管是 Markdown 还是 JSON，本质都是"把技能描述加载出来注入到 system prompt"。格式只是载体，思想是一样的。
+> **关于 Skill 的文件格式：** 在 OpenClaw / Claude Code 的实际实现中，Skill 的标准格式是 **Markdown**（每个 Skill 目录下有一个 `SKILL.md`，里面详细描述执行步骤、最佳实践、示例代码等）。但这个系列示例中采用的是 **JSON** 格式，所以代码里用 `json.load()` 来解析。这不影响理解核心思路——不管是 Markdown 还是 JSON，本质都是"把技能描述加载出来注入到 system prompt"。格式只是载体，思想是一样的。
 
 ### 4.2 Skills vs Rules
 
@@ -505,4 +505,4 @@ def run_agent_claudecode(task, use_plan=False):
 
 ---
 
-*本文基于 [GitHubxsy/nanoAgent](https://github.com/GitHubxsy/nanoAgent) 的 agent-skills-mcp.py 分析。完整系列：[第一篇：底层原理](../01-essence/agent-essence.md) → [第二篇：记忆与规划](../02-memory/agent-memory.md) → 第三篇：Rules、Skills 与 MCP（本文） → [第四篇：SubAgent 子智能体](../04-subagent/agent-subagent.md)*
+*本文基于本仓库中的 [agent-skills-mcp.py](./agent-skills-mcp.py) 分析。完整系列：[第一篇：底层原理](../01-essence/agent-essence.md) → [第二篇：记忆与规划](../02-memory/agent-memory.md) → 第三篇：Rules、Skills 与 MCP（本文） → [第四篇：SubAgent 子智能体](../04-subagent/agent-subagent.md)*

@@ -335,4 +335,4 @@ print(run_main_agent("帮 TODO 应用加一个截止日期功能", reg))
 
 -----
 
-*本文是「从零开始理解 Agent」系列的番外篇。完整系列见 [GitHub 仓库](https://github.com/GitHubxsy/nanoAgent)。*
+*本文是「从零开始理解 Agent」系列的番外篇。完整系列见仓库目录与 README。*

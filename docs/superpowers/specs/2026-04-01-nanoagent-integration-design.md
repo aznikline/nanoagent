@@ -1,37 +1,34 @@
 # nanoAgent Integration Design
 
-> For this repository, the goal is to integrate the upstream `GitHubxsy/nanoAgent` project into a locally owned repository while preserving the original learning path and adding a clearer, self-authored knowledge layer.
+> For this repository, the goal is to organize the existing `nanoAgent` chapter content into a locally owned repository while preserving the original learning path and adding a clearer, self-authored knowledge layer.
 
 ## Goal
 
 Build a locally initialized Git repository at `/Users/wizout/op/nanoagent` that:
 
-- fully preserves the upstream `nanoAgent` chapter-based learning structure;
+- fully preserves the existing `nanoAgent` chapter-based learning structure;
 - adds a new top-level documentation layer for self-authored Chinese study notes and architecture summaries;
 - provides a clearer main repository entrypoint for future reading, maintenance, and extension;
-- avoids unnecessary rewrites of the upstream teaching code;
-- documents known upstream inconsistencies instead of hiding them.
+- avoids unnecessary rewrites of the teaching code;
+- documents known consistency issues instead of hiding them.
 
 ## Non-Goals
 
-- Re-architect the upstream project into a new framework.
+- Re-architect the chapter content into a new framework.
 - Rewrite the original tutorial code into a production agent system.
 - Add new online services, telemetry, or unrelated dependencies.
-- Claim all upstream tests pass if local environment or upstream state does not support that conclusion.
+- Claim all tests pass if local environment or repository state does not support that conclusion.
 
 ## Source Baseline
 
-The upstream repository under study is:
-
-- Repository: `https://github.com/GitHubxsy/nanoAgent`
-- Resolved HEAD during analysis: `2195810aa7d6f915bd02ec75ff893903bf6bf1d5`
+The repository content under study is the current `nanoAgent` chapter set present in this workspace.
 
 Observed characteristics:
 
 - The repository is primarily a teaching project built around seven progressively evolving Python examples.
 - The main integrated implementation is `full/agent-full.py`.
-- The dependency surface is intentionally small, with upstream `requirements.txt` containing only `openai`.
-- Some repository assets are not fully consistent with each other. In particular, `tests/test_agent.py` references `agent.py` and `agent-plus.py`, which were not present in the upstream tree snapshot used for this integration design.
+- The dependency surface is intentionally small, with `requirements.txt` containing only `openai`.
+- Some repository assets are not fully consistent with each other. In particular, `tests/test_agent.py` references `agent.py` and `agent-plus.py`, which were not present in the tree snapshot used for this integration design.
 
 ## Repository Shape
 
@@ -39,7 +36,7 @@ The integrated repository should use a dual-layer structure:
 
 ### 1. Upstream Preservation Layer
 
-These upstream directories should be preserved as-is unless a minimal compatibility adjustment is required:
+These chapter directories should be preserved as-is unless a minimal compatibility adjustment is required:
 
 - `01-essence/`
 - `02-memory/`
@@ -55,14 +52,14 @@ These upstream directories should be preserved as-is unless a minimal compatibil
 - `tech-sharing/`
 - `tests/`
 
-These directories form the original learning path and should remain easy to compare against the upstream project.
+These directories form the original learning path and should remain easy to compare within the repository.
 
 ### 2. Local Integration Layer
 
 These locally authored files and directories should be added:
 
 - `README.md`
-- `README.upstream.md`
+- `README.series.md`
 - `docs/summary/`
 - `docs/summary/nanoagent-study-notes.zh-CN.md`
 - `docs/summary/nanoagent-architecture.zh-CN.md`
@@ -82,19 +79,19 @@ These helpers are optional because the integration goal is clarity, not heavy re
 `README.md` should become the local repository entrypoint. It should:
 
 - explain what this repository is;
-- explain that the upstream tutorial content is preserved;
+- explain that the tutorial content is preserved;
 - explain what was added locally;
 - provide two reading paths:
   - original chapter-by-chapter learning path;
   - locally summarized conceptual learning path;
 - show the minimal run instructions;
-- explain verification limitations and known upstream inconsistencies where relevant.
+- explain verification limitations and known consistency issues where relevant.
 
 ### Upstream README Preservation
 
-The upstream `README.md` content should be preserved under `README.upstream.md` rather than discarded.
+The series guide content should be preserved under `README.series.md` rather than discarded.
 
-This keeps the original framing available without forcing the local repository to use the upstream README as its main entrypoint.
+This keeps the original framing available without forcing the local repository to use the series guide as its main entrypoint.
 
 ### Local Summary Documents
 
@@ -125,7 +122,7 @@ The integration should be intentionally conservative.
 
 ### Preserve Tutorial Code Correspondence
 
-The original tutorial code should remain easy to map to the upstream articles and directory structure. This means:
+The original tutorial code should remain easy to map to the articles and directory structure. This means:
 
 - no large file moves for chapter code;
 - no unrequested rewrites of the example implementations;
@@ -137,17 +134,17 @@ The local repository should be made maintainable, but only with a thin layer:
 
 - initialize a local Git repository;
 - add a minimal `.gitignore`;
-- keep `requirements.txt` aligned with upstream unless a local verification necessity requires a minimal addition.
+- keep `requirements.txt` aligned with the repository unless a local verification necessity requires a minimal addition.
 
 ### Handle Upstream Inconsistencies Transparently
 
-When upstream code, docs, and tests do not fully align, the default action should be:
+When code, docs, and tests do not fully align, the default action should be:
 
 1. verify the inconsistency;
 2. document it clearly;
 3. avoid disguising it with broad local rewrites.
 
-Local compatibility fixes are acceptable only if they are small, clearly scoped, and improve the repository without distorting upstream intent.
+Local compatibility fixes are acceptable only if they are small, clearly scoped, and improve the repository without distorting the tutorial intent.
 
 ## Verification Strategy
 
@@ -170,19 +167,19 @@ Therefore, the implementation must not assume full automated test execution is p
 
 The implementation phase should deliver:
 
-- imported upstream repository contents inside `/Users/wizout/op/nanoagent`;
-- preserved upstream learning structure;
+- imported repository contents inside `/Users/wizout/op/nanoagent`;
+- preserved the learning structure;
 - locally authored integration README;
-- preserved upstream README copy;
+- preserved the series guide copy;
 - locally authored Chinese study notes and architecture summary;
 - local Git initialization;
 - at least one local commit representing the integrated baseline.
 
 ## Risks
 
-### Upstream Drift
+### Content Drift
 
-The upstream repository may change after this design was written. The integration should note the analyzed commit and avoid implying it reflects all future upstream states.
+The repository content may change after this design was written. The integration should avoid implying this design captures all future states.
 
 ### Test Inconsistency
 
@@ -196,8 +193,8 @@ It would be easy to turn the project into a new framework-shaped repository. Tha
 
 The recommended execution order is:
 
-1. import the upstream repository into the current empty directory;
-2. preserve the upstream README under a separate filename;
+1. import the repository into the current empty directory;
+2. preserve the series guide under a separate filename;
 3. add the new local main README;
 4. add the two Chinese summary documents;
 5. add minimal repository hygiene files such as `.gitignore`;
@@ -219,4 +216,4 @@ Coverage check:
 Ambiguity check:
 
 - the repository should prefer minimal change over cleanup-heavy restructuring;
-- upstream inconsistencies should be documented first, not silently rewritten.
+- consistency issues should be documented first, not silently rewritten.

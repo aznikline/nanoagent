@@ -2,7 +2,7 @@
 
 [English](./README_CN.md) | 中文
 
-> 通过一个极简开源项目 [nanoAgent](https://github.com/GitHubxsy/nanoAgent)，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
+> 通过一个极简开源项目 nanoAgent，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
 
 ---
 
@@ -78,8 +78,8 @@
 ## 安装与快速上手
 
 ```bash
-git clone https://github.com/GitHubxsy/nanoAgent.git
-cd nanoAgent
+git clone <your-repository-url> nanoagent
+cd nanoagent
 pip install -r requirements.txt
 
 export OPENAI_API_KEY="your-key"

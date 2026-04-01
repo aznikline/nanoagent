@@ -350,4 +350,4 @@ python nano_mcp_http_agent.py "What's the weather in Beijing?"
 
 -----
 
-*完整 Agent 系列见 [GitHub 仓库](https://github.com/GitHubxsy/nanoAgent)。*
+*完整 Agent 系列见仓库目录与 README。*

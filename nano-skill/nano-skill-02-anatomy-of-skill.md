@@ -59,7 +59,7 @@ python3 scripts/wespy_cli.py "https://mp.weixin.qq.com/mp/appmsgalbum?..." --max
 
 - 优先使用本地源码路径 ~/Documents/QNSZ/project/WeSpy
 - 若本地不存在则自动执行 git clone 到该目录
-- 通过导入 wespy.main.main 直接调用上游 CLI，保持行为一致
+- 通过导入 wespy.main.main 直接调用对应 CLI，保持行为一致
 ```
 
 这份文件虽然不长，但有清晰的四层结构。Agent 读取它的过程，就像你面试一个人一样，是**分层递进**的：
@@ -234,7 +234,7 @@ wespy-fetcher 的"实现说明"：
 ```markdown
 - 优先使用本地源码路径 ~/Documents/QNSZ/project/WeSpy
 - 若本地不存在则自动执行 git clone 到该目录
-- 通过导入 wespy.main.main 直接调用上游 CLI，保持行为一致
+- 通过导入 wespy.main.main 直接调用对应 CLI，保持行为一致
 ```
 
 很多人写 Skill 的时候，把精力花在 description 和操作指南上，补充说明随便写两句甚至不写。这是一个很大的误区。

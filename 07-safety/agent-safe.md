@@ -1,6 +1,6 @@
 # 从零开始理解 Agent（七）：Agent 执行 rm -rf / 怎么办？三道安全防线
 
-> **「从零开始理解 Agent」系列** —— 从一个极简开源项目 [nanoAgent](https://github.com/GitHubxsy/nanoAgent) 出发，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
+> **「从零开始理解 Agent」系列** —— 从一个极简开源项目 nanoAgent 出发，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
 >
 > - [第一篇：底层原理，只有 100 行](../01-essence/agent-essence.md) —— 工具 + 循环
 > - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 182 行
@@ -350,4 +350,4 @@ def execute_tool(name, args):
 
 ---
 
-*本文基于 agent-safe.py（[GitHub 源码](https://github.com/GitHubxsy/nanoAgent/blob/main/07-safety/agent-safe.py)）分析。完整系列：[第一篇](../01-essence/agent-essence.md) → [第二篇](../02-memory/agent-memory.md) → [第三篇](../03-skills-mcp/agent-skills-mcp.md) → [第四篇](../04-subagent/agent-subagent.md) → [第五篇](../05-teams/agent-teams.md) → [第六篇](../06-compact/agent-compact.md) → 第七篇（本文）*
+*本文基于 [agent-safe.py](./agent-safe.py) 分析。完整系列：[第一篇](../01-essence/agent-essence.md) → [第二篇](../02-memory/agent-memory.md) → [第三篇](../03-skills-mcp/agent-skills-mcp.md) → [第四篇](../04-subagent/agent-subagent.md) → [第五篇](../05-teams/agent-teams.md) → [第六篇](../06-compact/agent-compact.md) → 第七篇（本文）*
