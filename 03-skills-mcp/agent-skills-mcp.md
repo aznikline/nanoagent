@@ -1,8 +1,8 @@
-# 从零开始理解 Agent（三）：OpenClaw / Claude Code 的 Rules、Skills 与 MCP 机制
+# 从零开始理解 Agent（三）：Rules、Skills、MCP 与可配置能力
 
-> **「从零开始理解 Agent」系列** —— 通过一个不到 300 行的开源项目 nanoagent，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
+> **「从零开始理解 Agent」系列** —— 以 `nanoagent` 这组小而完整的 Python 示例为主线，逐层拆解 Agent 的核心结构。
 >
-> - [第一篇：底层原理，只有 100 行](../01-essence/agent-essence.md) —— 工具 + 循环
+> - [第一篇：最小闭环与工具调用](../01-essence/agent-essence.md) —— 工具 + 循环
 > - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 206 行
 > - **第三篇：Rules、Skills 与 MCP**（本文）—— 282 行
 > - [第四篇：SubAgent 子智能体](../04-subagent/agent-subagent.md) —— 192 行
@@ -14,15 +14,16 @@
 
 但在第二篇结尾，我们留下了三个未解之谜：工具是硬编码的，没有行为约束，规划是被动触发的。
 
-今天我们继续进化—— [agent-skills-mcp.py](./agent-skills-mcp.py)（当前仓库中 `282` 行）。如果你用过 OpenClaw 或 Claude Code，你对 `CLAUDE.md` 规则文件、`.agent/skills/` 技能目录、MCP 工具配置一定不陌生，这些概念正是本篇要拆解的核心。`agent-skills-mcp.py` 在前两个版本的基础上，引入了四个新概念来回答那三个问题：
+今天我们继续往前走，看 [agent-skills-mcp.py](./agent-skills-mcp.py)（当前仓库中 `282` 行）。这一章真正要解决的不是“再加几个工具”，而是怎样把 Agent 的行为约束、能力扩展和外部工具接入从硬编码里拆出来，变成可配置结构。
 
-> 源码定位
-> - 对应脚本：[agent-skills-mcp.py](./agent-skills-mcp.py)
-> - 当前仓库中的脚本行数：`282` 行
-> - 读完这篇，你应该能回答三个问题：
-> - Rules、Skills、MCP 为什么是三个不同层次的问题
-> - 一个 Agent 为什么需要“知道什么”和“能做什么”两条独立扩展线
-> - 规划为什么最好也被视为工具，而不是额外开关
+## 本文聚焦
+
+- 对应脚本：[agent-skills-mcp.py](./agent-skills-mcp.py)
+- 当前仓库中的脚本行数：`282`
+- 这篇会回答三件事：
+- Rules、Skills、MCP 为什么是三个不同层次的问题
+- 一个 Agent 为什么需要“知道什么”和“能做什么”两条独立扩展线
+- 规划为什么最好也被视为工具，而不是额外开关
 
 | 未解问题 | 解决方案 | 新概念 |
 |---------|---------|--------|
@@ -495,15 +496,15 @@ def run_agent_claudecode(task, use_plan=False):
 
 ---
 
-## 九、结语
+## 九、本章结论
 
 | 文件 | 行数 | 核心主题 | 一句话总结 |
 |------|------|---------|-----------|
-| agent-essence.py | 100 | 工具 + 循环 | Agent 的最小本质 |
+| agent-essence.py | 103 | 工具 + 循环 | Agent 的最小本质 |
 | agent-memory.py | 206 | 记忆 + 规划 | Agent 的时间维度——记住过去、规划未来 |
 | agent-skills-mcp.py | 282 | Rules + Skills + MCP | Agent 的空间维度——扩展知识与工具 |
 
-如果你跟着这三篇文章走了下来，你已经理解了 Agent 最核心的架构要素。但还有一个问题我们没有触及：当任务复杂到一个 Agent 忙不过来时怎么办？能不能让 Agent 自己找帮手？
+如果你跟着这三篇走到这里，已经能看清一个重要分界线：前两篇解决的是“Agent 能不能持续工作”，而这一篇开始解决“Agent 能不能被项目真正使用”。但还有一个问题没碰：当任务复杂到一个 Agent 忙不过来时怎么办？能不能把局部任务直接分出去？
 
 这就是多智能体协作——SubAgent 的领域。在 [第四篇：SubAgent 子智能体](../04-subagent/agent-subagent.md) 中，我们将用不到 30 行新增代码，让主 Agent 学会"分工派活"。
 
@@ -513,4 +514,4 @@ def run_agent_claudecode(task, use_plan=False):
 
 ---
 
-*本文基于本仓库中的 [agent-skills-mcp.py](./agent-skills-mcp.py) 分析。完整系列：[第一篇：底层原理](../01-essence/agent-essence.md) → [第二篇：记忆与规划](../02-memory/agent-memory.md) → 第三篇：Rules、Skills 与 MCP（本文） → [第四篇：SubAgent 子智能体](../04-subagent/agent-subagent.md)*
+*本文基于本仓库中的 [agent-skills-mcp.py](./agent-skills-mcp.py) 分析。完整系列：[第一篇：最小闭环与工具调用](../01-essence/agent-essence.md) → [第二篇：记忆与规划](../02-memory/agent-memory.md) → 第三篇：Rules、Skills 与 MCP（本文） → [第四篇：SubAgent 子智能体](../04-subagent/agent-subagent.md)*
