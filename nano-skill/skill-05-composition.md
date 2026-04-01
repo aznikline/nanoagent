@@ -182,7 +182,7 @@ article-summarizer 里有一句："不负责文章抓取（抓取请使用 wespy
 
 **原则四：输入假设最小化**
 
-你的 Skill 对输入的假设越少，能接住的上游 Skill 就越多。
+你的 Skill 对输入的假设越少，能接住的前置 Skill 就越多。
 
 article-summarizer 只要求"一篇 Markdown 格式的文章"。它不关心这篇文章是从哪来的——wespy-fetcher 抓的、x-fetcher 从 Twitter 抓的、video-downloader 转写的字幕、还是用户自己粘贴的，统统都能处理。
 

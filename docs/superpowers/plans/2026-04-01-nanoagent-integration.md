@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Import the upstream `GitHubxsy/nanoAgent` snapshot into this local repository, preserve its chapter-based learning structure, add locally authored Chinese summary documentation, and commit a clean integrated baseline.
+**Goal:** Import the existing `nanoAgent` snapshot into this local repository, preserve its chapter-based learning structure, add locally authored Chinese summary documentation, and commit a clean integrated baseline.
 
-**Architecture:** The implementation preserves the upstream content as the primary source layer, then adds a thin local integration layer on top of it. The local layer replaces the repository entrypoint with a new `README.md`, preserves upstream readmes under separate filenames, adds summary docs, keeps engineering changes minimal, and explicitly documents known upstream inconsistencies rather than hiding them with broad rewrites.
+**Architecture:** The implementation preserves the chapter content as the primary source layer, then adds a thin local integration layer on top of it. The local layer replaces the repository entrypoint with a new `README.md`, preserves the series guides under separate filenames, adds summary docs, keeps engineering changes minimal, and explicitly documents known consistency issues rather than hiding them with broad rewrites.
 
-**Tech Stack:** Git, shell utilities (`rsync`, `cp`, `mv`, `find`, `test`), Markdown, Python project layout, upstream `openai` dependency
+**Tech Stack:** Git, shell utilities (`rsync`, `cp`, `mv`, `find`, `test`), Markdown, Python project layout, `openai` dependency
 
 ---
 
@@ -78,34 +78,34 @@ find /Users/wizout/op/nanoagent -maxdepth 1 -type d | sort
 
 Expected: the key chapter files and top-level directories now exist.
 
-- [ ] **Step 4: Commit the raw upstream import**
+- [ ] **Step 4: Commit the raw repository import**
 
 ```bash
 git -C /Users/wizout/op/nanoagent add 01-essence 02-memory 03-skills-mcp 04-subagent 05-teams 06-compact 07-safety bonus full nano-skill real-mcp tech-sharing tests LICENSE README.md README_CN.md requirements.txt .gitignore
-git -C /Users/wizout/op/nanoagent commit -m "chore: import upstream nanoagent snapshot"
+git -C /Users/wizout/op/nanoagent commit -m "chore: import nanoagent snapshot"
 ```
 
 ### Task 2: Preserve The Upstream Readmes And Install The Local Entry Point
 
 **Files:**
-- Create: `/Users/wizout/op/nanoagent/README.upstream.md`
-- Create: `/Users/wizout/op/nanoagent/README.upstream.zh-CN.md`
+- Create: `/Users/wizout/op/nanoagent/README.series.md`
+- Create: `/Users/wizout/op/nanoagent/README.series.zh-CN.md`
 - Modify: `/Users/wizout/op/nanoagent/README.md`
 
-- [ ] **Step 1: Verify the imported upstream readmes contain the expected source content**
+- [ ] **Step 1: Verify the imported guide files contain the expected source content**
 
 ```bash
 sed -n '1,12p' /Users/wizout/op/nanoagent/README.md
 sed -n '1,12p' /Users/wizout/op/nanoagent/README_CN.md
 ```
 
-Expected: the imported files still contain the upstream readme headers and intro text.
+Expected: the imported files still contain the guide headers and intro text.
 
-- [ ] **Step 2: Preserve upstream readmes under explicit filenames**
+- [ ] **Step 2: Preserve the guide files under explicit filenames**
 
 ```bash
-cp /Users/wizout/op/nanoagent/README.md /Users/wizout/op/nanoagent/README.upstream.md
-cp /Users/wizout/op/nanoagent/README_CN.md /Users/wizout/op/nanoagent/README.upstream.zh-CN.md
+cp /Users/wizout/op/nanoagent/README.md /Users/wizout/op/nanoagent/README.series.md
+cp /Users/wizout/op/nanoagent/README_CN.md /Users/wizout/op/nanoagent/README.series.zh-CN.md
 ```
 
 - [ ] **Step 3: Replace `README.md` with the local integration entrypoint**
@@ -113,17 +113,17 @@ cp /Users/wizout/op/nanoagent/README_CN.md /Users/wizout/op/nanoagent/README.ups
 ```markdown
 # nanoagent
 
-这是一个对上游 [`GitHubxsy/nanoAgent`](https://github.com/GitHubxsy/nanoAgent) 的本地整合仓库。
+这是一个围绕 `nanoAgent` 章节内容整理过的本地仓库。
 
 ## 仓库结构
 
-- 保留上游原始章节目录，方便按教程脉络阅读
+- 保留原始章节目录，方便按教程脉络阅读
 - 新增本地总结文档，方便从“能力栈”视角理解 Agent
-- 保留上游 README 作为对照资料
+- 保留系列导读作为参考资料
 
 ## 阅读路径
 
-### 路径一：按上游章节学习
+### 路径一：按章节学习
 
 - `01-essence/`
 - `02-memory/`
@@ -149,20 +149,20 @@ python full/agent-full.py "重构 hello.py，添加类型注解和单元测试"
 
 ## 对照资料
 
-- 上游英文导读：`README.upstream.md`
-- 上游中文说明：`README.upstream.zh-CN.md`
+- 系列英文导读：`README.series.md`
+- 系列中文说明：`README.series.zh-CN.md`
 
 ## 已知事项
 
-- 当前仓库保留了上游测试文件，但上游测试与文件树存在不完全一致的地方。
+- 当前仓库保留了测试文件，但测试与文件树存在不完全一致的地方。
 - 若本地没有 `pytest`，请先安装后再运行测试。
 ```
 
 - [ ] **Step 4: Verify the new entrypoint and preserved copies**
 
 ```bash
-test -f /Users/wizout/op/nanoagent/README.upstream.md
-test -f /Users/wizout/op/nanoagent/README.upstream.zh-CN.md
+test -f /Users/wizout/op/nanoagent/README.series.md
+test -f /Users/wizout/op/nanoagent/README.series.zh-CN.md
 grep -n "本地整合仓库" /Users/wizout/op/nanoagent/README.md
 ```
 
@@ -171,7 +171,7 @@ Expected: preserved copies exist and the new main README contains the local inte
 - [ ] **Step 5: Commit the repository entrypoint split**
 
 ```bash
-git -C /Users/wizout/op/nanoagent add README.md README.upstream.md README.upstream.zh-CN.md
+git -C /Users/wizout/op/nanoagent add README.md README.series.md README.series.zh-CN.md
 git -C /Users/wizout/op/nanoagent commit -m "docs: add local nanoagent entrypoint"
 ```
 
@@ -350,8 +350,8 @@ git -C /Users/wizout/op/nanoagent commit -m "chore: add local repository hygiene
 
 **Files:**
 - Modify: `/Users/wizout/op/nanoagent/README.md`
-- Modify: `/Users/wizout/op/nanoagent/README.upstream.md`
-- Modify: `/Users/wizout/op/nanoagent/README.upstream.zh-CN.md`
+- Modify: `/Users/wizout/op/nanoagent/README.series.md`
+- Modify: `/Users/wizout/op/nanoagent/README.series.zh-CN.md`
 - Modify: `/Users/wizout/op/nanoagent/docs/summary/nanoagent-study-notes.zh-CN.md`
 - Modify: `/Users/wizout/op/nanoagent/docs/summary/nanoagent-architecture.zh-CN.md`
 - Modify: `/Users/wizout/op/nanoagent/.gitignore`
@@ -372,8 +372,8 @@ python3 - <<'PY'
 from pathlib import Path
 paths = [
     Path('/Users/wizout/op/nanoagent/README.md'),
-    Path('/Users/wizout/op/nanoagent/README.upstream.md'),
-    Path('/Users/wizout/op/nanoagent/README.upstream.zh-CN.md'),
+    Path('/Users/wizout/op/nanoagent/README.series.md'),
+    Path('/Users/wizout/op/nanoagent/README.series.zh-CN.md'),
     Path('/Users/wizout/op/nanoagent/docs/summary/nanoagent-study-notes.zh-CN.md'),
     Path('/Users/wizout/op/nanoagent/docs/summary/nanoagent-architecture.zh-CN.md'),
 ]
@@ -391,7 +391,7 @@ Expected: each file prints `ok` with a non-zero character count.
 python3 -m pytest -q /Users/wizout/op/nanoagent/tests || true
 ```
 
-Expected: either tests run, or the command reports missing pytest or upstream test inconsistencies. Record the actual result in the final summary.
+Expected: either tests run, or the command reports missing pytest or repository test inconsistencies. Record the actual result in the final summary.
 
 - [ ] **Step 4: Create the integrated baseline commit**
 

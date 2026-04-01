@@ -249,4 +249,4 @@ Command 不是什么高深的设计，就是一个前缀匹配 + 字典分发。
 
 ---
 
-*本文基于 agent-command.py 分析。完整 Agent 系列见 [GitHub 仓库](https://github.com/GitHubxsy/nanoAgent)。*
+*本文基于 agent-command.py 分析。完整 Agent 系列见仓库目录与 README。*
