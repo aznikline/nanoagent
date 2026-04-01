@@ -103,25 +103,25 @@ def run_agent_plus(task, use_plan=False):
 ### 2.4 记忆流程全景
 
 ```text
-第 1 次运行                          第 2 次运行
-───────────                        ───────────
+第 1 次运行                          第 2 次运行                    
+───────────                        ───────────                      
 用户: "创建 hello.py"               用户: "读取 hello.py 并加上注释"
-        │                                  │
-        ▼                                  ▼
-  system prompt:                    system prompt:
-  "You are a helpful               "You are a helpful
-   assistant..."                    assistant...
-                                    
-                                    Previous context:
-                                    ## 2026-03-12 14:30
-                                    Task: 创建 hello.py
-                                    Result: 已创建..."
-        │                                  │
-        ▼                                  ▼
-  Agent 执行任务                     Agent 执行任务
-        │                           (知道之前创建过 hello.py)
-        ▼                                  │
-  save_memory() ──写入──▶ agent_memory.md ◀─── save_memory()
+        │                                  │                        
+        ▼                                  ▼                        
+  system prompt:                    system prompt:                  
+  "You are a helpful               "You are a helpful               
+   assistant..."                    assistant...                    
+                                                                    
+                                    Previous context:               
+                                    ## 2026-03-12 14:30             
+                                    Task: 创建 hello.py             
+                                    Result: 已创建..."              
+        │                                  │                        
+        ▼                                  ▼                        
+  Agent 执行任务                     Agent 执行任务                 
+        │                           (知道之前创建过 hello.py)       
+        ▼                                  │                        
+  save_memory() ──写入──▶ agent_memory.md ◀─── save_memory()        
 ```
 
 ### 2.5 记忆的本质
@@ -178,11 +178,11 @@ agent-essence.py 和 agent-memory.py 代表了 Agent 领域的两种经典范式
 
 ```text
 agent-essence.py (ReAct)                  agent-memory.py (Plan-then-Execute)
-
-思考 → 行动 → 观察                规划（全局思考）
-  ↑         │                         │
-  └─────────┘                      步骤1 → 步骤2 → 步骤3
-                                   (每步内部仍是 ReAct)
+                                                                             
+思考 → 行动 → 观察                规划（全局思考）                           
+  ↑         │                         │                                      
+  └─────────┘                      步骤1 → 步骤2 → 步骤3                     
+                                   (每步内部仍是 ReAct)                      
 ```
 
 ReAct 灵活但容易迷失，Plan-then-Execute 有全局视角但规划可能不准确。agent-memory.py 通过 `--plan` 参数让用户自行选择——这种"默认简单，按需复杂"的设计在工程上很实用。
