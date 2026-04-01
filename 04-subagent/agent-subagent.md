@@ -1,6 +1,6 @@
 # 从零开始理解 Agent（四）：给 Agent 找个帮手——最简 SubAgent 实现
 
-> **「从零开始理解 Agent」系列** —— 通过一个不到 300 行的开源项目 nanoAgent，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
+> **「从零开始理解 Agent」系列** —— 通过一个不到 300 行的开源项目 nanoagent，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
 >
 > - [第一篇：底层原理，只有 100 行](../01-essence/agent-essence.md) —— 工具 + 循环
 > - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 182 行
@@ -22,7 +22,7 @@
 
 ## 一、一个生活类比秒懂 SubAgent
 
-```
+```text
 之前（一个人干所有活）:
 
   老板 → "小张，你把前端后端数据库全搞定"
@@ -45,7 +45,7 @@
 
 但要注意一个关键点：这个类比不完全准确。现实中的员工有名字、有工位、有记忆，下次还能找他。**SubAgent 不是这样的。** SubAgent 的生命周期是：
 
-```
+```text
 生成 → 接收任务 → 干活（可以调用工具）→ 返回结果摘要 → 消亡
 ```
 
@@ -144,7 +144,7 @@ available_functions["subagent"] = subagent
 
 让我用一张图还原 subagent 被调用的完整链路：
 
-```
+```text
 用户: "创建一个 TODO 应用，包含 Python 后端和 HTML 前端"
   │
   ▼
@@ -242,7 +242,7 @@ python 04-subagent/agent-subagent.py "创建一个简单的 TODO 应用，包含
 
 终端输出大致如下：
 
-```
+```text
 [Tool] subagent({"role": "Python backend developer", "task": "创建一个 FastAPI ..."})
 
 ==================================================
@@ -299,7 +299,7 @@ SubAgent 和 Plan 最大的区别：
 
 四篇文章，我们从零搭建了一个完整的 Agent 认知体系：
 
-```
+```text
 ┌───────────────────────────────────────────────────────┐
 │                    Agent 架构全景                       │
 │                                                        │
