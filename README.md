@@ -1,72 +1,181 @@
 # nanoagent
 
-这是一个围绕 `nanoAgent` 章节内容整理过的本地仓库。
+[中文](./README_CN.md)
 
-目标不是重写教程内容，而是在完整保留其章节结构的前提下，补一层更适合二次学习和归档的本地整理内容。
+`nanoagent` is a source-first learning repository about building agents step by step in Python.
 
-## 这份整合做了什么
+The codebase is organized as a progression:
 
-- 保留章节目录和代码文件，方便按原教程路径阅读
-- 新增本地中文学习笔记和架构总结
-- 明确记录已观察到的一致性问题，而不是直接改写原始内容
+- `01-essence`: minimal agent loop with tool calling
+- `02-memory`: persistent memory and optional planning
+- `03-skills-mcp`: rules, skills, MCP config loading, and plan-as-tool
+- `04-subagent`: subagent as a callable tool
+- `05-teams`: persistent multi-agent collaboration with inbox-style messaging
+- `06-compact`: context compaction for long-running conversations
+- `07-safety`: command blacklist, confirmation, and output truncation
+- `full`: one-file integration of the full stack
 
-## 仓库结构
+It is not a production framework. It is a compact codebase for understanding how agent capabilities accumulate over time.
 
-### 章节内容层
+## Repository Layout
 
-- `01-essence/`
-- `02-memory/`
-- `03-skills-mcp/`
-- `04-subagent/`
-- `05-teams/`
-- `06-compact/`
-- `07-safety/`
-- `full/`
-- `bonus/`
-- `nano-skill/`
-- `real-mcp/`
-- `tech-sharing/`
-- `tests/`
+### Core chapters
 
-### 本地整理层
+- `01-essence/agent-essence.py`
+- `02-memory/agent-memory.py`
+- `03-skills-mcp/agent-skills-mcp.py`
+- `04-subagent/agent-subagent.py`
+- `05-teams/agent-teams.py`
+- `06-compact/agent-compact.py`
+- `07-safety/agent-safe.py`
+- `full/agent-full.py`
 
-- `docs/summary/nanoagent-study-notes.zh-CN.md`
-- `docs/summary/nanoagent-architecture.zh-CN.md`
-- `docs/superpowers/specs/2026-04-01-nanoagent-integration-design.md`
-- `docs/superpowers/plans/2026-04-01-nanoagent-integration.md`
+### Supporting material
 
-## 阅读路径
+- `*.md` files beside each chapter explain the design and code
+- `bonus/` contains extra agent patterns such as commands and preset agents
+- `real-mcp/` contains a minimal HTTP-based MCP example
+- `nano-skill/` contains skill-focused notes and examples
+- `tech-sharing/tech-sharing.md` is a long-form presentation-style summary
 
-### 路径一：按章节顺序学习
+### Tests
 
-适合想顺着章节演进，从最小 Agent 一路看到完整集成版的人。
+- `tests/test_compact.py`
+- `tests/test_subagent.py`
+- `tests/test_agent.py`
 
-1. `01-essence/`
-2. `02-memory/`
-3. `03-skills-mcp/`
-4. `04-subagent/`
-5. `05-teams/`
-6. `06-compact/`
-7. `07-safety/`
-8. `full/`
+The compact and subagent tests are mock-driven examples. `tests/test_agent.py` references `agent.py` and `agent-plus.py`, which are not present in the current tree, so treat that file as a regression artifact rather than a reliable green test target.
 
-### 路径二：按本地总结理解
+## What Each Stage Adds
 
-适合想先建立整体心智模型，再回头看具体代码的人。
+### 1. Minimal loop
 
-1. `docs/summary/nanoagent-architecture.zh-CN.md`
-2. `docs/summary/nanoagent-study-notes.zh-CN.md`
-3. 再回到各章节代码和文章做细读
+`01-essence/agent-essence.py` defines three tools:
 
-## 快速运行
+- `execute_bash`
+- `read_file`
+- `write_file`
 
-先安装依赖：
+The agent loop is the essential pattern:
+
+1. send messages and tool schemas to the model
+2. receive tool calls or a final answer
+3. execute tools in Python
+4. append tool outputs back into the conversation
+5. repeat until the model stops
+
+### 2. Memory and planning
+
+`02-memory/agent-memory.py` adds:
+
+- `agent_memory.md` persistence
+- `save_memory()` and `load_memory()`
+- `create_plan()` for 3-5 step decomposition
+- `run_agent_step()` and `run_agent_plus()`
+
+This is the first point where the agent can remember prior work and optionally break tasks into multiple steps with `--plan`.
+
+### 3. Rules, skills, MCP
+
+`03-skills-mcp/agent-skills-mcp.py` expands the toolset and loads external configuration from:
+
+- `.agent/rules/*.md`
+- `.agent/skills/*.json`
+- `.agent/mcp.json`
+
+It adds these base tools:
+
+- `read`
+- `write`
+- `edit`
+- `glob`
+- `grep`
+- `bash`
+- `plan`
+
+This version is the closest to a small Claude Code style harness: it loads local rules, local skill descriptors, and MCP tool schemas.
+
+### 4. Subagents
+
+`04-subagent/agent-subagent.py` introduces `subagent(role, task)`, where delegation itself becomes a tool.
+
+The subagent runs with:
+
+- its own system prompt
+- its own message history
+- a restricted tool list that excludes recursive `subagent`
+
+This is a focused delegation model, not a persistent team model.
+
+### 5. Teams
+
+`05-teams/agent-teams.py` moves from temporary delegation to persistent collaboration.
+
+It introduces:
+
+- `Agent` objects with durable `messages`
+- `Team` for hire / send / broadcast / disband
+- inbox-style communication between agents
+- a simple planning step that creates 2-4 team members
+
+### 6. Context compaction
+
+`06-compact/agent-compact.py` keeps long tasks alive by summarizing old messages.
+
+Important constants:
+
+- `COMPACT_THRESHOLD = 20`
+- `KEEP_RECENT = 6`
+
+When the message list grows too large, it summarizes old conversation history and keeps only:
+
+- the system message
+- a summary pair
+- the most recent messages
+
+### 7. Safety
+
+`07-safety/agent-safe.py` adds three practical safeguards:
+
+- dangerous command blacklist via regex patterns
+- explicit user confirmation before read / write / bash execution
+- output truncation with `MAX_OUTPUT_LENGTH = 5000`
+
+This is still simple, but it is the first version that seriously constrains tool execution.
+
+### Full integration
+
+`full/agent-full.py` combines the chapter features:
+
+- file and shell tools
+- memory
+- rules / skills / MCP loading
+- subagents
+- team mode
+- compaction
+- safety hooks
+
+Entry examples:
+
+- `python full/agent-full.py "your task"`
+- `python full/agent-full.py --auto "your task"`
+- `python full/agent-full.py --team "your task"`
+
+## Installation
+
+The only declared dependency is:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-再设置环境变量：
+`requirements.txt` currently contains:
+
+```txt
+openai
+```
+
+Set environment variables before running any chapter:
 
 ```bash
 export OPENAI_API_KEY="your-key"
@@ -74,20 +183,98 @@ export OPENAI_BASE_URL="https://api.openai.com/v1"
 export OPENAI_MODEL="gpt-4o-mini"
 ```
 
-运行示例：
+## Running The Code
+
+### Minimal agent
 
 ```bash
-python 01-essence/agent-essence.py "列出当前目录下所有 Python 文件"
-python 02-memory/agent-memory.py "统计代码行数并记住结果"
-python full/agent-full.py "重构 hello.py，添加类型注解和单元测试"
+python 01-essence/agent-essence.py "list all Python files in the current directory"
 ```
 
-## 已知事项
+### Memory + planning
 
-- 当前仓库以教学演示为主，不等同于生产级 Agent 框架
-- 当前测试与文件树存在不完全一致的情况
-- 当前环境里如果没有 `pytest`，测试命令不会直接通过，需要先补安装
+```bash
+python 02-memory/agent-memory.py --plan "analyze this repository and write a short summary"
+```
 
-## 许可证
+### Rules / skills / MCP
 
-`LICENSE` 为 MIT。
+```bash
+python 03-skills-mcp/agent-skills-mcp.py --plan "search for TODOs and summarize findings"
+```
+
+### Subagent delegation
+
+```bash
+python 04-subagent/agent-subagent.py "create a TODO app with a Python backend and HTML frontend"
+```
+
+### Team workflow
+
+```bash
+python 05-teams/agent-teams.py "create a TODO app with a Python backend and HTML frontend"
+```
+
+### Context compaction
+
+```bash
+python 06-compact/agent-compact.py "find all Python files, count lines, sort by line count, and write report.txt"
+```
+
+### Safety-enabled agent
+
+```bash
+python 07-safety/agent-safe.py "list files in the current directory"
+```
+
+### Full integrated agent
+
+```bash
+python full/agent-full.py "refactor hello.py and add tests"
+```
+
+## Local Configuration Files
+
+Some chapters expect optional local files:
+
+- `.agent/rules/*.md`
+- `.agent/skills/*.json`
+- `.agent/mcp.json`
+- `agent_memory.md`
+
+If they do not exist, the code generally falls back cleanly and continues without them.
+
+## Validation Notes
+
+What was verified locally:
+
+- the repository structure matches the chapter progression above
+- the top-level scripts are present
+- the README now reflects actual source files instead of prior integration wording
+
+What was not fully verified in this environment:
+
+- `pytest` is not installed, so `python3 -m pytest -q tests` does not run here
+- `tests/test_agent.py` targets files that are not present in the current repository state
+
+## Recommended Reading Order
+
+If you want the shortest path to understanding the code:
+
+1. `01-essence`
+2. `02-memory`
+3. `03-skills-mcp`
+4. `04-subagent`
+5. `05-teams`
+6. `06-compact`
+7. `07-safety`
+8. `full`
+
+If you want the fastest path to the most complete implementation:
+
+1. `full/agent-full.py`
+2. then backtrack into the chapter files for individual concepts
+
+## License
+
+MIT. See [LICENSE](./LICENSE).
