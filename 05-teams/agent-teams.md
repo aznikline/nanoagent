@@ -205,18 +205,18 @@ def run_team(task):
   第 2 阶段: 协作开发
 ============================================================
 
-── [1/3] alice 开始工作 ──
+[1/3] alice 开始工作
   [alice] write({"path": "app.py", ...})
   [alice] → 已创建 app.py，包含 GET/POST/DELETE 三个接口...
   [广播] alice → 全体: 我完成了任务。摘要: 已创建 app.py...
 
-── [2/3] bob 开始工作 ──
+[2/3] bob 开始工作
   （bob 的 inbox 里有 alice 的广播，他知道后端接口长什么样）
   [bob] write({"path": "index.html", ...})
   [bob] → 已创建 index.html，调用了 alice 定义的 API 接口...
   [广播] bob → 全体: 我完成了任务。摘要: 已创建 index.html...
 
-── [3/3] carol 开始工作 ──
+[3/3] carol 开始工作
   （carol 的 inbox 里有 alice 和 bob 的广播）
   [carol] read({"path": "app.py"})
   [carol] read({"path": "index.html"})

@@ -102,27 +102,12 @@ def run_agent_plus(task, use_plan=False):
 
 ### 2.4 记忆流程全景
 
-```text
-第 1 次运行                          第 2 次运行
-───────────                        ───────────
-用户: "创建 hello.py"               用户: "读取 hello.py 并加上注释"
-        │                                  │
-        ▼                                  ▼
-  system prompt:                    system prompt:
-  "You are a helpful               "You are a helpful
-   assistant..."                    assistant...
-                                    
-                                    Previous context:
-                                    ## 2026-03-12 14:30
-                                    Task: 创建 hello.py
-                                    Result: 已创建..."
-        │                                  │
-        ▼                                  ▼
-  Agent 执行任务                     Agent 执行任务
-        │                           (知道之前创建过 hello.py)
-        ▼                                  │
-  save_memory() ──写入──▶ agent_memory.md ◀─── save_memory()
-```
+| 阶段 | 第 1 次运行 | 第 2 次运行 |
+|------|-------------|-------------|
+| 用户任务 | `"创建 hello.py"` | `"读取 hello.py 并加上注释"` |
+| system prompt | 只有基础提示词 | 基础提示词 + `Previous context` |
+| Agent 能看到什么 | 当前任务 | 当前任务 + 上次执行摘要 |
+| 执行后落盘 | `save_memory()` 追加到 `agent_memory.md` | 再次把最新结果追加到 `agent_memory.md` |
 
 ### 2.5 记忆的本质
 
@@ -176,14 +161,10 @@ def create_plan(task):
 
 agent-essence.py 和 agent-memory.py 代表了 Agent 领域的两种经典范式：
 
-```text
-agent-essence.py (ReAct)                  agent-memory.py (Plan-then-Execute)
-
-思考 → 行动 → 观察                规划（全局思考）
-  ↑         │                         │
-  └─────────┘                      步骤1 → 步骤2 → 步骤3
-                                   (每步内部仍是 ReAct)
-```
+| 范式 | 执行方式 | 特点 |
+|------|----------|------|
+| `agent-essence.py`（ReAct） | 思考 -> 行动 -> 观察，循环推进 | 灵活，但容易在复杂任务里迷失 |
+| `agent-memory.py`（Plan-then-Execute） | 先规划，再按步骤执行；每步内部仍是 ReAct | 有全局视角，但规划质量依赖模型输出 |
 
 ReAct 灵活但容易迷失，Plan-then-Execute 有全局视角但规划可能不准确。agent-memory.py 通过 `--plan` 参数让用户自行选择——这种"默认简单，按需复杂"的设计在工程上很实用。
 

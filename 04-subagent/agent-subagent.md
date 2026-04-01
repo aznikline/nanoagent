@@ -43,13 +43,13 @@
 
 现在（项目经理 + 专人）:
 
-  老板 → 项目经理（主 Agent）
-              │
-              ├── "后端用 FastAPI" → 后端工程师（SubAgent A）
-              ├── "前端用 React"   → 前端工程师（SubAgent B）
-              └── "验证能跑通"     → 测试工程师（SubAgent C）
+老板先把任务交给项目经理（主 Agent），再由主 Agent 拆给不同的 SubAgent：
 
-  每个人只管自己的事，干完把结果交给项目经理汇总。
+- `"后端用 FastAPI"` -> 后端工程师（SubAgent A）
+- `"前端用 React"` -> 前端工程师（SubAgent B）
+- `"验证能跑通"` -> 测试工程师（SubAgent C）
+
+每个人只管自己的事，干完把结果交给项目经理汇总。
 ```
 
 但要注意一个关键点：这个类比不完全准确。现实中的员工有名字、有工位、有记忆，下次还能找他。**SubAgent 不是这样的。** SubAgent 的生命周期是：
@@ -151,44 +151,13 @@ available_functions["subagent"] = subagent
 
 这正是 Agent 和传统程序的根本区别，也是贯穿这整个系列的核心设计思想。
 
-让我用一张图还原 subagent 被调用的完整链路：
+subagent 被调用的完整链路可以压成 5 步：
 
-```text
-用户: "创建一个 TODO 应用，包含 Python 后端和 HTML 前端"
-  │
-  ▼
-主 Agent 的 run_agent() 循环启动
-  │
-  ▼
-(1) 代码把 messages + tools 列表发送给 LLM
-    tools 列表里包含: [read, write, edit, glob, grep, bash, subagent]
-                                                            ^^^^^^^^
-                                                       LLM 看到了这个工具
-  │
-  ▼
-(2) LLM 分析任务，决定委派，返回:
-    {"tool_calls": [{"function": {"name": "subagent",
-                                  "arguments": {"role": "Python backend developer",
-                                                "task": "用 FastAPI 创建..."}}}]}
-  │
-  ▼
-(3) 核心循环中的通用调度代码执行:
-    fn = "subagent"
-    args = {"role": "Python backend developer", "task": "..."}
-    result = available_functions["subagent"](**args)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-             走到了我们写的 subagent() 函数！
-  │
-  ▼
-(4) subagent() 内部启动一个全新的 Agent 循环
-    - 独立的 system prompt: "You are a Python backend developer."
-    - 独立的 messages 列表
-    - 可以使用 read/write/edit/bash 等工具
-    - 循环结束后，返回结果文本
-  │
-  ▼
-(5) 结果返回给主 Agent，主 Agent 可能继续派出前端 SubAgent...
-```
+1. 用户输入 `"创建一个 TODO 应用，包含 Python 后端和 HTML 前端"`。
+2. 主 Agent 把 `messages + tools` 发给 LLM，其中工具列表包含 `subagent`。
+3. LLM 决定委派，返回一个 `tool_call`，目标函数名就是 `subagent`。
+4. 核心循环执行 `available_functions["subagent"](**args)`，进入我们写的 `subagent()` 函数。
+5. `subagent()` 内部启动一个全新的 Agent 循环，结束后把结果文本交还给主 Agent。
 
 关键在第 (3) 步——`available_functions["subagent"](**args)` 这行代码。它和 `available_functions["bash"](**args)` 走的是**完全相同的调度路径**。在核心循环眼里，subagent 和 bash 没有任何区别，都是"LLM 说要调用，那我就执行"。
 
@@ -306,28 +275,14 @@ SubAgent 和 Plan 最大的区别：
 
 ## 七、本章结论：SubAgent 解决什么，不解决什么
 
-四篇文章，我们从零搭建了一个完整的 Agent 认知体系：
+四篇文章，我们从零搭建了一个完整的 Agent 认知体系。到这一篇为止，各层职责可以整理成：
 
-```text
-┌───────────────────────────────────────────────────────┐
-│                    Agent 架构全景                       │
-│                                                        │
-│  ┌──────────────┐  第四篇 (本文)                       │
-│  │  SubAgent    │  多智能体协作 ── subagent() 工具      │
-│  ├──────────────┤  第三篇                              │
-│  │  Rules       │  行为约束层 ──── .agent/rules/       │
-│  │  Skills      │  技能知识层 ──── .agent/skills/      │
-│  │  MCP         │  工具扩展层 ──── .agent/mcp.json     │
-│  ├──────────────┤  第二篇                              │
-│  │  Memory      │  持久记忆层 ──── agent_memory.md     │
-│  │  Planning    │  任务分解层 ──── create_plan()       │
-│  ├──────────────┤  第一篇                              │
-│  │  LLM         │  推理决策层 ──── OpenAI API          │
-│  │  Tools       │  工具执行层 ──── bash/read/write     │
-│  │  Loop        │  核心循环层 ──── for + tool_calls    │
-│  └──────────────┘                                      │
-└───────────────────────────────────────────────────────┘
-```
+| 层级 | 作用 |
+|------|------|
+| 第四篇（本文） | `SubAgent`，通过 `subagent()` 工具把任务委派给一次性子智能体 |
+| 第三篇 | `Rules`、`Skills`、`MCP`，负责行为约束、知识注入和工具扩展 |
+| 第二篇 | `Memory`、`Planning`，负责持久记忆和任务分解 |
+| 第一篇 | `LLM`、`Tools`、`Loop`，负责推理决策、工具执行和核心循环 |
 
 | 篇 | 文件 | 核心主题 | 一句话总结 |
 |----|------|---------|-----------|

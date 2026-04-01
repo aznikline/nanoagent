@@ -26,7 +26,7 @@
 
 | # | 文章 | 代码行数 | 核心主题 |
 |---|------|---------|---------|
-| 01 | 底层原理，只有 100 行 | 103 行 | 工具 + 循环（Agent 的最小本质） |
+| 01 | 最小闭环与工具调用 | 103 行 | 工具 + 循环（Agent 的最小本质） |
 | 02 | 记忆与规划 | 206 行 | 持久记忆 + Plan-then-Execute |
 | 03 | Rules、Skills 与 MCP | 282 行 | 行为约束 + 技能注册 + 工具协议 |
 | 04 | SubAgent 子智能体 | 192 行 | 一次性委派，分工干活 |
@@ -37,23 +37,16 @@
 
 ---
 
-## 三、第一篇：底层原理，只有 100 行
+## 三、第一篇：最小闭环与工具调用
 
 **核心公式：Agent = LLM + 工具 + 循环**
 
 ### 架构分层
 
-```text
-┌────────────────────────────────────────┐
-│  1. LLM 客户端初始化                    │
-├────────────────────────────────────────┤
-│  2. 工具定义（Tool Schema，JSON 说明书） │
-├────────────────────────────────────────┤
-│  3. 工具实现（Python 函数）              │
-├────────────────────────────────────────┤
-│  4. Agent 循环（Core Loop）             │
-└────────────────────────────────────────┘
-```
+1. LLM 客户端初始化
+2. 工具定义（Tool Schema，JSON 说明书）
+3. 工具实现（Python 函数）
+4. Agent 循环（Core Loop）
 
 ### 三个工具
 
@@ -112,7 +105,7 @@ def run_agent(user_message, max_iterations=5):
 
 ### 新增能力对比
 
-| 能力 | 第一篇 (100行) | 第二篇 (182行) |
+| 能力 | 第一篇 (103 行) | 第二篇 (206 行) |
 |------|------|------|
 | 跨会话记忆 | ❌ 每次运行都失忆 | ✅ `agent_memory.md` 文件持久化 |
 | 任务规划 | ❌ 走一步看一步 | ✅ 先拆解再执行 |
@@ -137,14 +130,10 @@ def run_agent(user_message, max_iterations=5):
 
 ### 两种规划范式
 
-```text
-ReAct（第一篇）            Plan-then-Execute（第二篇）
-
-思考 → 行动 → 观察         先规划（全局思考）
-  ↑         │                    │
-  └─────────┘           步骤1 → 步骤2 → 步骤3
-                         (每步内部仍是 ReAct)
-```
+| 范式 | 执行方式 |
+|------|----------|
+| ReAct（第一篇） | 思考 -> 行动 -> 观察，循环推进 |
+| Plan-then-Execute（第二篇） | 先规划，再执行步骤 1、步骤 2、步骤 3；每步内部仍是 ReAct |
 
 ---
 
@@ -184,10 +173,10 @@ all_tools = base_tools + mcp_tools  # 一行代码搞定合并
 
 MCP（Model Context Protocol）解决的核心问题：
 
-```text
-没有 MCP：每个 Agent 各写各的工具，N×M 的工作量
-有  MCP：工具实现一次，所有 Agent 共享，N+M 的工作量
-```
+| 场景 | 成本模型 |
+|------|----------|
+| 没有 MCP | 每个 Agent 各写各的工具，接近 `N × M` 的工作量 |
+| 有 MCP | 工具实现一次，多个 Agent 共享，接近 `N + M` 的工作量 |
 
 ### 能力的两个正交维度
 
@@ -387,13 +376,11 @@ class Team:
 
 ```text
 第 1 阶段：PM 规划团队（LLM 根据任务自动决定需要哪些角色）
-  ┌─────────────────────────────────────┐
-  │ 任务：创建 TODO 应用                  │
-  │ 规划结果：                           │
-  │   alice — backend developer         │
-  │   bob   — frontend developer        │
-  │   carol — reviewer                  │
-  └─────────────────────────────────────┘
+  任务：创建 TODO 应用
+  规划结果：
+  - alice：backend developer
+  - bob：frontend developer
+  - carol：reviewer
 
 第 2 阶段：招募（hire）
   team.hire("alice", "backend developer")
@@ -422,13 +409,10 @@ class Team:
 
 ### 通信机制详解
 
-```text
-点对点（send）              广播（broadcast）
-─────────────────          ──────────────────────────────
-alice → bob               alice → [bob, carol, dave, ...]
-  仅 bob 的 inbox          所有人的 inbox（除 alice 自己）
-  适合：传递特定信息         适合：同步全局进展
-```
+| 通信方式 | 目标 | 适用场景 |
+|----------|------|----------|
+| `send` | 只进入指定成员的 `inbox` | 传递特定信息 |
+| `broadcast` | 进入除发送者外所有成员的 `inbox` | 同步全局进展 |
 
 **消息在什么时候被处理？**
 
@@ -459,17 +443,13 @@ alice.chat("给后端写单测")   # alice.messages 已有 20 条上下文
 
 ### 生命周期时序图
 
-```text
-时间轴 →
+| 成员 | 生命周期示例 |
+|------|--------------|
+| `alice` | `hire -> chat(写后端) -> broadcast -> chat(修 bug) -> disband` |
+| `bob` | `hire -> inbox -> chat(写前端) -> broadcast -> disband` |
+| `carol` | `hire -> inbox -> chat(审查) -> disband` |
 
-alice:  [hire]──[chat:写后端]──────[broadcast]──[chat:修bug]──[disband]
-                                       │
-bob:    [hire]──────────────[inbox]──[chat:写前端]──[broadcast]──[disband]
-                                                        │
-carol:  [hire]──────────────────────────────[inbox]──[chat:审查]──[disband]
-
-                            ↑ 信息在这里流动，每个 Agent 的记忆独立累积
-```
+信息通过 `inbox` 在成员之间流动，而每个 Agent 的 `messages` 会各自独立累积。
 
 ---
 
@@ -548,24 +528,10 @@ def compact_messages(messages, keep_recent=6, threshold=20):
 
 ### 三道防线
 
-```text
-LLM 输出一条命令
-  │
-  ▼
-防线 1: 命令黑名单
-  │  "rm -rf /"  → 🚫 直接拦截
-  │  "ls -la"    → ✅ 通过
-  ▼
-防线 2: 用户确认
-  │  "这个命令安全吗？[y/N]"
-  │  用户说 N   → 🚫 拒绝执行
-  │  用户说 y   → ✅ 通过
-  ▼
-防线 3: 输出截断
-  │  结果超过 5000 字符 → 截断，防止撑爆 context
-  ▼
-真正执行
-```
+1. 防线 1：命令黑名单，像 `rm -rf /` 这类命令直接拦截。
+2. 防线 2：用户确认，让人类决定是否放行。
+3. 防线 3：输出截断，结果超过 5000 字符就裁剪，防止撑爆上下文。
+4. 三层都通过后，命令才会真正执行。
 
 ### Hook 管道架构
 
@@ -620,26 +586,15 @@ def execute_with_hooks(tool_name, args, func):
 
 ### 一张图看清 Model vs Harness
 
-```text
-┌─────────────────────────────────────────────────────┐
-│                    Harness                            │
-│                                                       │
-│  Rules / Skills / MCP Tools                          │
-│         ↓                                            │
-│  System Prompt + 工具列表                             │
-│  Memory（第二篇）+ Compaction（第六篇）               │
-│         ↓                                            │
-│      ┌─────────┐                                     │
-│      │  Model  │  ← 模型只管思考和决策                │
-│      └─────────┘                                     │
-│         ↓                                            │
-│  Hook 管道（第七篇）：黑名单 → 用户确认 → 执行        │
-│         ↓                                            │
-│  工具执行层（第一篇）：bash / read / write            │
-│         ↓                                            │
-│  协作层（第四、五篇）：SubAgent / Teams               │
-└─────────────────────────────────────────────────────┘
-```
+可以把 Harness 理解成一条装配链：
+
+1. Rules / Skills / MCP Tools 提供约束和能力来源。
+2. 它们被组装进 `System Prompt + 工具列表`。
+3. Memory（第二篇）和 Compaction（第六篇）负责上下文管理。
+4. Model 只负责思考和决策。
+5. Hook 管道（第七篇）负责黑名单、用户确认和执行后处理。
+6. 工具执行层（第一篇）负责 `bash / read / write` 等真实动作。
+7. 协作层（第四、五篇）负责 SubAgent 和 Teams。
 
 ### 为什么 Harness 概念重要？
 
@@ -660,39 +615,21 @@ def execute_with_hooks(tool_name, args, func):
 
 ```text
 Agent = Model + Harness
-      = Model + 你写的那 507 行代码
 ```
 
 ---
 
 ## 十一、架构演进全景
 
-```text
-┌──────────────────────────────────────────────────────────┐
-│                    Agent 完整架构                          │
-│                                                           │
-│  ┌──────────────┐  第七篇：agent-safe.py                  │
-│  │  安全防线     │  黑名单 + 用户确认 + 输出截断 + Hook     │
-│  ├──────────────┤  第六篇：agent-compact.py               │
-│  │  上下文压缩   │  Compaction，对抗 context window 上限   │
-│  ├──────────────┤  第五篇：agent-teams.py                 │
-│  │  Teams       │  持久身份 + 通信通道 + 生命周期管理       │
-│  ├──────────────┤  第四篇：agent-subagent.py              │
-│  │  SubAgent    │  一次性委派，独立上下文，分工干活          │
-│  ├──────────────┤  第三篇：agent-skills-mcp.py            │
-│  │  Rules       │  行为约束层 → .agent/rules/             │
-│  │  Skills      │  技能知识层 → .agent/skills/            │
-│  │  MCP         │  工具扩展层 → .agent/mcp.json           │
-│  ├──────────────┤  第二篇：agent-memory.py                │
-│  │  Memory      │  持久记忆层 → agent_memory.md           │
-│  │  Planning    │  任务分解层 → Plan-then-Execute          │
-│  ├──────────────┤  第一篇：agent-essence.py               │
-│  │  LLM         │  推理决策层 → OpenAI API                │
-│  │  Tools       │  工具执行层 → bash / read / write       │
-│  │  Loop        │  核心循环层 → for + tool_calls          │
-│  └──────────────┘                                         │
-└──────────────────────────────────────────────────────────┘
-```
+| 层级 | 对应主题 | 作用 |
+|------|----------|------|
+| 第七篇 | 安全防线 | 黑名单、用户确认、输出截断、Hook |
+| 第六篇 | 上下文压缩 | Compaction，对抗 context window 上限 |
+| 第五篇 | Teams | 持久身份、通信通道、生命周期管理 |
+| 第四篇 | SubAgent | 一次性委派、独立上下文、分工协作 |
+| 第三篇 | Rules / Skills / MCP | 行为约束、技能知识、工具扩展 |
+| 第二篇 | Memory / Planning | 持久记忆、任务分解 |
+| 第一篇 | LLM / Tools / Loop | 推理决策、工具执行、核心循环 |
 
 | 篇 | 核心主题 | 一句话总结 |
 |----|---------|-----------|
@@ -732,4 +669,4 @@ python 07-safety/agent-safe.py "删除所有临时文件"
 
 ---
 
-*「从零开始理解 Agent」系列 —— 7 篇文章，7 个代码文件，1 篇番外，从 100 行到 507 行，逐层拆解 Agent 的完整架构。*
+*「从零开始理解 Agent」系列用 7 篇文章、7 个代码文件和 1 篇番外，把 Agent 从最小闭环一路拆到完整 Harness。*

@@ -304,18 +304,11 @@ all_tools = base_tools + mcp_tools
 
 ### 5.5 MCP 解决的根本问题
 
-```text
-没有 MCP 的世界:                    有 MCP 的世界:
-
-Agent A         Agent B             MCP Server: Slack  MCP Server: GitHub
-├── Slack (自写) ├── Slack (自写)         │                │
-├── GitHub(自写) ├── Jira (自写)          └───── 标准协议 ──┘
-└── DB (自写)    └── DB (自写)                    │
-                                         ┌───────┼───────┐
-每个 Agent 各写各的                      Agent A  Agent B  Agent C
-N × M 的工作量                          工具实现一次，全部共享
-                                         N + M 的工作量
-```
+| 场景 | 没有 MCP | 有 MCP |
+|------|----------|--------|
+| 工具接入方式 | 每个 Agent 都自己实现 Slack、GitHub、数据库等适配层 | 工具能力由 MCP Server 统一暴露 |
+| 复用方式 | Agent A 和 Agent B 会重复造轮子 | Agent A、B、C 共享同一套标准协议 |
+| 成本模型 | `N × M`，Agent 越多、工具越多，重复劳动越多 | `N + M`，工具实现一次，多个 Agent 复用 |
 
 ---
 
@@ -371,27 +364,14 @@ if function_name == "plan":
 
 **上下文跨步共享。** 和第二篇中一样，`messages` 在所有步骤间共享。
 
-```text
-用户: "重构项目的测试框架"
-  │
-  ▼
-LLM 判断任务复杂 → 主动调用 plan 工具
-  │
-  ▼
-plan() 返回 4 个步骤
-  │
-  ├── Step 1: 分析当前测试结构
-  │     └── run_agent_step() → [glob, read, grep]
-  │
-  ├── Step 2: 创建新的测试目录
-  │     └── run_agent_step() → [bash, write]
-  │
-  ├── Step 3: 迁移现有测试文件
-  │     └── run_agent_step() → [read, edit, write]
-  │
-  └── Step 4: 验证所有测试通过
-        └── run_agent_step() → [bash]
-```
+以“重构项目的测试框架”为例，执行顺序是：
+
+1. LLM 判断任务复杂，主动调用 `plan` 工具。
+2. `plan()` 生成 4 个步骤。
+3. Step 1 分析当前测试结构，对应工具通常是 `glob`、`read`、`grep`。
+4. Step 2 创建新的测试目录，对应工具通常是 `bash`、`write`。
+5. Step 3 迁移现有测试文件，对应工具通常是 `read`、`edit`、`write`。
+6. Step 4 验证所有测试通过，对应工具通常是 `bash`。
 
 ---
 
@@ -420,31 +400,19 @@ def run_agent_claudecode(task, use_plan=False):
     # 4. 执行 ...
 ```
 
-```text
-┌─────────────────────── 文件系统 ───────────────────────┐
-│                                                         │
-│  .agent/rules/*.md    → load_rules()    → system prompt │
-│  .agent/skills/*.json → load_skills()   → system prompt │
-│  .agent/mcp.json      → load_mcp_tools()→ tools 列表    │
-│  agent_memory.md      → load_memory()   → system prompt │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-                          │
-                          ▼
-              ┌──── Agent 运行时 ────┐
-              │                      │
-              │  system prompt =     │
-              │    基础指令           │
-              │    + Rules           │
-              │    + Skills          │
-              │    + Memory          │
-              │                      │
-              │  tools =             │
-              │    base_tools (7个)   │
-              │    + mcp_tools (N个)  │
-              │                      │
-              └──────────────────────┘
-```
+运行时的组装过程可以拆成两层：
+
+| 文件侧输入 | 加载函数 | 注入位置 |
+|------------|----------|----------|
+| `.agent/rules/*.md` | `load_rules()` | `system prompt` |
+| `.agent/skills/*.json` | `load_skills()` | `system prompt` |
+| `.agent/mcp.json` | `load_mcp_tools()` | `tools` 列表 |
+| `agent_memory.md` | `load_memory()` | `system prompt` |
+
+Agent 运行时再做两件事：
+
+1. 组装 `system prompt = 基础指令 + Rules + Skills + Memory`。
+2. 组装 `tools = base_tools + mcp_tools`。
 
 这个架构揭示了一个重要原则：**Agent 的能力由两个正交维度定义**——
 
@@ -457,28 +425,13 @@ def run_agent_claudecode(task, use_plan=False):
 
 ## 八、从最小循环到可配置 Agent 的认知地图
 
-三篇文章读下来，我们已经在不到 `300` 行的脚本里看到了 Agent 的一条完整主干。用一张七层架构图来做最后的回顾：
+三篇文章读下来，我们已经在不到 `300` 行的脚本里看到了 Agent 的一条完整主干。把它压成分层清单会更稳定：
 
-```text
-┌───────────────────────────────────────────────────────┐
-│                    Agent 架构全景                       │
-│                                                        │
-│  ┌──────────────┐  第三篇：agent-skills-mcp.py         │
-│  │  Rules       │  行为约束层 ──── .agent/rules/       │
-│  │  Skills      │  技能知识层 ──── .agent/skills/      │
-│  │  MCP         │  工具扩展层 ──── .agent/mcp.json     │
-│  │  Plan Tool   │  自主规划层 ──── plan() 作为工具      │
-│  ├──────────────┤  第二篇：agent-memory.py               │
-│  │  Memory      │  持久记忆层 ──── agent_memory.md     │
-│  │  Planning    │  任务分解层 ──── create_plan()       │
-│  │  Multi-step  │  多步编排层 ──── 步骤间上下文共享     │
-│  ├──────────────┤  第一篇：agent-essence.py                    │
-│  │  LLM         │  推理决策层 ──── OpenAI API          │
-│  │  Tools       │  工具执行层 ──── bash/read/write     │
-│  │  Loop        │  核心循环层 ──── for + tool_calls    │
-│  └──────────────┘                                      │
-└───────────────────────────────────────────────────────┘
-```
+| 层级 | 对应文件 | 作用 |
+|------|----------|------|
+| 第三篇 | `agent-skills-mcp.py` | Rules、Skills、MCP、Plan Tool，负责行为约束、技能知识、工具扩展和自主规划 |
+| 第二篇 | `agent-memory.py` | Memory、Planning、Multi-step，负责持久记忆、任务拆解和跨步骤上下文共享 |
+| 第一篇 | `agent-essence.py` | LLM、Tools、Loop，负责推理决策、工具执行和核心循环 |
 
 每一层都在回答一个关键问题：
 
