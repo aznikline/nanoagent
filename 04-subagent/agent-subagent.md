@@ -1,22 +1,31 @@
-# 从零开始理解 Agent（四）：给 Agent 找个帮手——最简 SubAgent 实现
+# 从零开始理解 Agent（四）：SubAgent 与独立上下文委派
 
-> **「从零开始理解 Agent」系列** —— 通过一个不到 300 行的开源项目 nanoagent，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
+> **「从零开始理解 Agent」系列** —— 以 `nanoagent` 这组小而完整的 Python 示例为主线，逐层拆解 Agent 的核心结构。
 >
-> - [第一篇：底层原理，只有 100 行](../01-essence/agent-essence.md) —— 工具 + 循环
-> - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 182 行
-> - [第三篇：Rules、Skills 与 MCP](../03-skills-mcp/agent-skills-mcp.md) —— 265 行
-> - **第四篇：最简 SubAgent 实现**（本文）—— 新开发，192 行
+> - [第一篇：最小闭环与工具调用](../01-essence/agent-essence.md) —— 工具 + 循环
+> - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 206 行
+> - [第三篇：Rules、Skills 与 MCP](../03-skills-mcp/agent-skills-mcp.md) —— 282 行
+> - **第四篇：最简 SubAgent 实现**（本文）—— 192 行
 > - [第五篇：多智能体协作与编排](../05-teams/agent-teams.md) —— 270 行
 > - [第六篇：上下文压缩](../06-compact/agent-compact.md) —— 169 行
 > - [第七篇：安全与权限控制](../07-safety/agent-safe.md) —— 219 行
 
-前三篇，我们一路把 Agent 从"会用工具"进化到了"有记忆、会规划、能扩展"。但到目前为止，所有版本都有一个共同特点：**永远只有一个 Agent 在干活**。
+前三篇把 Agent 从“会调工具”一路推进到了“有记忆、会规划、能配置”。但到目前为止，所有版本都还停留在一个前提上：**永远只有一个 Agent 在干活**。
 
 想象一下这个场景：你让 Agent "搭建一个博客系统，前端用 React，后端用 FastAPI，数据库用 SQLite"。一个 Agent 要同时精通前端、后端、数据库——它可以做到，但很容易顾此失彼，上下文越来越长，后面写前端的时候把前面后端的细节忘了。
 
 现实中我们怎么解决这类问题？**找帮手，分工合作。**
 
-这就是 SubAgent（子智能体）的核心思想：主 Agent 当项目经理，把子任务委派给拥有不同专业身份的 SubAgent，各管一块，互不干扰。
+这就是 SubAgent（子智能体）的核心思想：主 Agent 作为协调者，把局部任务委派给拥有不同专业身份的执行单元，各管一块，互不干扰。
+
+## 本文聚焦
+
+- 对应脚本：[agent-subagent.py](./agent-subagent.py)
+- 当前仓库中的脚本行数：`192`
+- 这篇会回答三件事：
+- SubAgent 和普通工具调用为什么在协议层面没有本质差别
+- 为什么委派时最重要的是独立上下文，而不是“多开一个模型”
+- 为什么 SubAgent 天生适合一次性任务，而不适合长期协作
 
 ---
 
@@ -295,7 +304,7 @@ SubAgent 和 Plan 最大的区别：
 
 ---
 
-## 七、系列总结：从 100 行到完整 Agent 架构
+## 七、本章结论：SubAgent 解决什么，不解决什么
 
 四篇文章，我们从零搭建了一个完整的 Agent 认知体系：
 
@@ -322,14 +331,14 @@ SubAgent 和 Plan 最大的区别：
 
 | 篇 | 文件 | 核心主题 | 一句话总结 |
 |----|------|---------|-----------|
-| 一 | agent-essence.py (100行) | 工具 + 循环 | Agent 的最小本质——LLM 是大脑，代码是手脚 |
-| 二 | agent-memory.py (182行) | 记忆 + 规划 | 时间维度——记住过去、规划未来 |
-| 三 | agent-skills-mcp.py (265行) | Rules + Skills + MCP | 空间维度——扩展知识与工具 |
-| 四 | agent-subagent.py (192行) ⭐新 | SubAgent | 协作维度——给 Agent 找帮手 |
+| 一 | agent-essence.py (103 行) | 工具 + 循环 | Agent 的最小本质——LLM 是大脑，代码是手脚 |
+| 二 | agent-memory.py (206 行) | 记忆 + 规划 | 时间维度——记住过去、规划未来 |
+| 三 | agent-skills-mcp.py (282 行) | Rules + Skills + MCP | 空间维度——扩展知识与工具 |
+| 四 | agent-subagent.py (192 行) | SubAgent | 协作维度——给 Agent 找帮手 |
 
 > 注：前三个文件来自前文示例。第四个文件是本文新增实现的（[agent-subagent.py](./agent-subagent.py)），为了聚焦 SubAgent 核心逻辑，刻意去掉了 Plan 功能，因此行数反而比第三篇少。这不是倒退，而是做减法——**用最干净的代码展示最核心的概念**。
 
-四个维度叠加，就构成了 OpenClaw、Claude Code、Cursor Agent、Devin 等产品的完整架构。
+四个维度叠加之后，Agent 已经开始具备明显的协作雏形。但这里的协作仍然是“临时委派”，不是“持久组织”。
 
 而贯穿整个系列的核心设计思想只有一个：**一切能力都是"工具"。** 读文件是工具，写文件是工具，搜索是工具，规划是工具（第三篇），甚至**派出一个子智能体也是工具**（本文）。LLM 通过统一的 Function Calling 协议按需调用它们，代码通过统一的路由表（`available_functions`）执行它们。
 
@@ -339,4 +348,4 @@ SubAgent 和 Plan 最大的区别：
 
 ---
 
-*本文基于本仓库中的架构扩展实现分析。完整系列：[第一篇：底层原理](../01-essence/agent-essence.md) → [第二篇：记忆与规划](../02-memory/agent-memory.md) → [第三篇：Rules、Skills 与 MCP](../03-skills-mcp/agent-skills-mcp.md) → 第四篇：SubAgent（本文） → [第五篇：多智能体协作](../05-teams/agent-teams.md)*
+*本文基于本仓库中的架构扩展实现分析。完整系列：[第一篇：最小闭环与工具调用](../01-essence/agent-essence.md) → [第二篇：记忆与规划](../02-memory/agent-memory.md) → [第三篇：Rules、Skills 与 MCP](../03-skills-mcp/agent-skills-mcp.md) → 第四篇：SubAgent（本文） → [第五篇：多智能体协作](../05-teams/agent-teams.md)*
