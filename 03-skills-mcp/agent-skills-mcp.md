@@ -3,18 +3,26 @@
 > **「从零开始理解 Agent」系列** —— 通过一个不到 300 行的开源项目 nanoagent，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
 >
 > - [第一篇：底层原理，只有 100 行](../01-essence/agent-essence.md) —— 工具 + 循环
-> - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 182 行
-> - **第三篇：Rules、Skills 与 MCP**（本文）—— 265 行
+> - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 206 行
+> - **第三篇：Rules、Skills 与 MCP**（本文）—— 282 行
 > - [第四篇：SubAgent 子智能体](../04-subagent/agent-subagent.md) —— 192 行
 > - [第五篇：多智能体协作与编排](../05-teams/agent-teams.md) —— 270 行
 > - [第六篇：上下文压缩](../06-compact/agent-compact.md) —— 169 行
 > - [第七篇：安全与权限控制](../07-safety/agent-safe.md) —— 219 行
 
-在前两篇中，我们一步步构建了 Agent 的核心能力：[第一篇](../01-essence/agent-essence.md)用 100 行代码搭好了"工具 + 循环"的地基；[第二篇](../02-memory/agent-memory.md)用 67 行增量代码装上了记忆和规划。
+在前两篇中，我们一步步构建了 Agent 的核心能力：[第一篇](../01-essence/agent-essence.md)搭好了"工具 + 循环"的地基；[第二篇](../02-memory/agent-memory.md)把记忆和规划补了上去。
 
 但在第二篇结尾，我们留下了三个未解之谜：工具是硬编码的，没有行为约束，规划是被动触发的。
 
-今天我们继续进化—— [agent-skills-mcp.py](./agent-skills-mcp.py)（265 行）。如果你用过 OpenClaw 或 Claude Code，你对 `CLAUDE.md` 规则文件、`.agent/skills/` 技能目录、MCP 工具配置一定不陌生——这些概念正是本篇要拆解的核心。agent-skills-mcp.py 在前两个版本的基础上，引入了四个新概念来回答那三个问题：
+今天我们继续进化—— [agent-skills-mcp.py](./agent-skills-mcp.py)（当前仓库中 `282` 行）。如果你用过 OpenClaw 或 Claude Code，你对 `CLAUDE.md` 规则文件、`.agent/skills/` 技能目录、MCP 工具配置一定不陌生，这些概念正是本篇要拆解的核心。`agent-skills-mcp.py` 在前两个版本的基础上，引入了四个新概念来回答那三个问题：
+
+> 源码定位
+> - 对应脚本：[agent-skills-mcp.py](./agent-skills-mcp.py)
+> - 当前仓库中的脚本行数：`282` 行
+> - 读完这篇，你应该能回答三个问题：
+> - Rules、Skills、MCP 为什么是三个不同层次的问题
+> - 一个 Agent 为什么需要“知道什么”和“能做什么”两条独立扩展线
+> - 规划为什么最好也被视为工具，而不是额外开关
 
 | 未解问题 | 解决方案 | 新概念 |
 |---------|---------|--------|
@@ -28,7 +36,7 @@
 
 先回顾整个进化路线：
 
-| 能力 | agent-essence.py (100行) | agent-memory.py (182行) | agent-skills-mcp.py (265行) |
+| 能力 | agent-essence.py (103 行) | agent-memory.py (206 行) | agent-skills-mcp.py (282 行) |
 |------|---|---|---|
 | 基础工具 | bash / read / write | bash / read / write | read / write / **edit** / **glob** / **grep** / bash |
 | 记忆 | ❌ | ✅ 文件持久化 | ✅ 文件持久化 |
@@ -446,9 +454,9 @@ def run_agent_claudecode(task, use_plan=False):
 
 ---
 
-## 八、从 100 行到 265 行的认知地图
+## 八、从最小循环到可配置 Agent 的认知地图
 
-三篇文章读下来，我们在 265 行代码里看到了 Agent 的全部核心概念。用一张七层架构图来做最后的回顾：
+三篇文章读下来，我们已经在不到 `300` 行的脚本里看到了 Agent 的一条完整主干。用一张七层架构图来做最后的回顾：
 
 ```text
 ┌───────────────────────────────────────────────────────┐
@@ -492,8 +500,8 @@ def run_agent_claudecode(task, use_plan=False):
 | 文件 | 行数 | 核心主题 | 一句话总结 |
 |------|------|---------|-----------|
 | agent-essence.py | 100 | 工具 + 循环 | Agent 的最小本质 |
-| agent-memory.py | 182 | 记忆 + 规划 | Agent 的时间维度——记住过去、规划未来 |
-| agent-skills-mcp.py | 265 | Rules + Skills + MCP | Agent 的空间维度——扩展知识与工具 |
+| agent-memory.py | 206 | 记忆 + 规划 | Agent 的时间维度——记住过去、规划未来 |
+| agent-skills-mcp.py | 282 | Rules + Skills + MCP | Agent 的空间维度——扩展知识与工具 |
 
 如果你跟着这三篇文章走了下来，你已经理解了 Agent 最核心的架构要素。但还有一个问题我们没有触及：当任务复杂到一个 Agent 忙不过来时怎么办？能不能让 Agent 自己找帮手？
 
@@ -501,7 +509,7 @@ def run_agent_claudecode(task, use_plan=False):
 
 > *"The question is not what you look at, but what you see."* — Henry David Thoreau
 >
-> nanoagent README 的这句引言，放在这里再合适不过。看过这 265 行代码之后，当你再打开 OpenClaw、Claude Code、Cursor 或任何 Agent 产品时，你看到的不再是"魔法"，而是——一个循环、几个工具、一段记忆、一份规则。
+> nanoagent README 的这句引言，放在这里再合适不过。看过这 `282` 行代码之后，当你再打开 OpenClaw、Claude Code、Cursor 或任何 Agent 产品时，你看到的不再是"魔法"，而是：一个循环、几个工具、一段记忆、一份规则，以及一套可扩展接口。
 
 ---
 

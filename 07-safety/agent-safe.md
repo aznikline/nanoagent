@@ -3,8 +3,8 @@
 > **「从零开始理解 Agent」系列** —— 从一个极简开源项目 nanoagent 出发，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
 >
 > - [第一篇：底层原理，只有 100 行](../01-essence/agent-essence.md) —— 工具 + 循环
-> - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 182 行
-> - [第三篇：Rules、Skills 与 MCP](../03-skills-mcp/agent-skills-mcp.md) —— 265 行
+> - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 206 行
+> - [第三篇：Rules、Skills 与 MCP](../03-skills-mcp/agent-skills-mcp.md) —— 282 行
 > - [第四篇：SubAgent 子智能体](../04-subagent/agent-subagent.md) —— 192 行
 > - [第五篇：多智能体协作与编排](../05-teams/agent-teams.md) —— 270 行
 > - [第六篇：上下文压缩](../06-compact/agent-compact.md) —— 169 行
@@ -17,6 +17,14 @@
 这不是理论风险。只要你让 Agent 干过真正的活，一定遇到过它试图做一些你没预料到的事情。
 
 今天我们回到 agent-essence.py 的基础上，加上三道安全防线，让 Agent 从"裸奔"变成"有保险的"。
+
+> 源码定位
+> - 对应脚本：[agent-safe.py](./agent-safe.py)
+> - 当前仓库中的脚本行数：`219` 行
+> - 读完这篇，你应该能回答三个问题：
+> - 为什么 Agent 安全问题首先是执行边界问题，而不是模型“聪不聪明”的问题
+> - 三道防线分别在拦什么风险
+> - 为什么 Hook 化是从教学样例走向工程化的自然下一步
 
 ---
 
@@ -320,7 +328,7 @@ def execute_tool(name, args):
 
 ## 十、系列收官
 
-七篇文章，从 100 行代码到完整的 Agent 认知体系：
+七篇文章，从最小循环到完整的 Agent 认知体系：
 
 | 篇 | 核心主题 | 一句话 |
 |----|---------|--------|

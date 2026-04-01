@@ -3,8 +3,8 @@
 > **「从零开始理解 Agent」系列** —— 从一个极简开源项目 nanoagent 出发，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
 >
 > - [第一篇：底层原理，只有 100 行](../01-essence/agent-essence.md) —— 工具 + 循环
-> - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 182 行
-> - [第三篇：Rules、Skills 与 MCP](../03-skills-mcp/agent-skills-mcp.md) —— 265 行
+> - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 206 行
+> - [第三篇：Rules、Skills 与 MCP](../03-skills-mcp/agent-skills-mcp.md) —— 282 行
 > - [第四篇：SubAgent 子智能体](../04-subagent/agent-subagent.md) —— 192 行
 > - **第五篇：多智能体协作与编排**（本文）—— 270 行
 > - [第六篇：上下文压缩](../06-compact/agent-compact.md) —— 169 行
@@ -17,6 +17,14 @@
 SubAgent 做不到这些。每次调用都是一个全新的、失忆的临时工。
 
 那怎么办？答案是：**从临时工升级为正式团队。**
+
+> 源码定位
+> - 对应脚本：[agent-teams.py](./agent-teams.py)
+> - 当前仓库中的脚本行数：`270` 行
+> - 读完这篇，你应该能回答三个问题：
+> - 为什么 `messages` 的存放位置会直接决定 Agent 的生命周期
+> - 团队协作最少需要补上哪三类能力
+> - SubAgent 和 Teams 分别适合什么任务形态
 
 ---
 
@@ -300,7 +308,7 @@ bob.chat("创建前端页面")  # bob 已经知道了 API 接口格式
 
 ## 七、系列总结
 
-五篇文章，从一个 100 行的极简 Agent 出发，逐层叠加能力：
+五篇文章，从一个最小 Agent 样本出发，逐层叠加能力：
 
 | 篇 | 核心新增 | 一句话 |
 |----|---------|--------|

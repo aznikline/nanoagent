@@ -3,9 +3,9 @@
 > **「从零开始理解 Agent」系列** —— 通过一个不到 300 行的开源项目 nanoagent，逐层拆解 OpenClaw / Claude Code 等 AI Agent 背后的全部核心概念。
 >
 > - [第一篇：底层原理，只有 100 行](../01-essence/agent-essence.md) —— 工具 + 循环
-> - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 182 行
-> - [第三篇：Rules、Skills 与 MCP](../03-skills-mcp/agent-skills-mcp.md) —— 265 行
-> - **第四篇：最简 SubAgent 实现**（本文）—— 新开发，192 行
+> - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 206 行
+> - [第三篇：Rules、Skills 与 MCP](../03-skills-mcp/agent-skills-mcp.md) —— 282 行
+> - **第四篇：最简 SubAgent 实现**（本文）—— 192 行
 > - [第五篇：多智能体协作与编排](../05-teams/agent-teams.md) —— 270 行
 > - [第六篇：上下文压缩](../06-compact/agent-compact.md) —— 169 行
 > - [第七篇：安全与权限控制](../07-safety/agent-safe.md) —— 219 行
@@ -17,6 +17,14 @@
 现实中我们怎么解决这类问题？**找帮手，分工合作。**
 
 这就是 SubAgent（子智能体）的核心思想：主 Agent 当项目经理，把子任务委派给拥有不同专业身份的 SubAgent，各管一块，互不干扰。
+
+> 源码定位
+> - 对应脚本：[agent-subagent.py](./agent-subagent.py)
+> - 当前仓库中的脚本行数：`192` 行
+> - 读完这篇，你应该能回答三个问题：
+> - SubAgent 和普通工具调用为什么在协议层面没有本质差别
+> - 为什么委派时最重要的是独立上下文，而不是“多开一个模型”
+> - 为什么 SubAgent 天生适合一次性任务，而不适合长期协作
 
 ---
 
@@ -322,9 +330,9 @@ SubAgent 和 Plan 最大的区别：
 
 | 篇 | 文件 | 核心主题 | 一句话总结 |
 |----|------|---------|-----------|
-| 一 | agent-essence.py (100行) | 工具 + 循环 | Agent 的最小本质——LLM 是大脑，代码是手脚 |
-| 二 | agent-memory.py (182行) | 记忆 + 规划 | 时间维度——记住过去、规划未来 |
-| 三 | agent-skills-mcp.py (265行) | Rules + Skills + MCP | 空间维度——扩展知识与工具 |
+| 一 | agent-essence.py (103 行) | 工具 + 循环 | Agent 的最小本质——LLM 是大脑，代码是手脚 |
+| 二 | agent-memory.py (206 行) | 记忆 + 规划 | 时间维度——记住过去、规划未来 |
+| 三 | agent-skills-mcp.py (282 行) | Rules + Skills + MCP | 空间维度——扩展知识与工具 |
 | 四 | agent-subagent.py (192行) ⭐新 | SubAgent | 协作维度——给 Agent 找帮手 |
 
 > 注：前三个文件来自前文示例。第四个文件是本文新增实现的（[agent-subagent.py](./agent-subagent.py)），为了聚焦 SubAgent 核心逻辑，刻意去掉了 Plan 功能，因此行数反而比第三篇少。这不是倒退，而是做减法——**用最干净的代码展示最核心的概念**。
