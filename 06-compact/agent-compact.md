@@ -3,27 +3,26 @@
 > **「从零开始理解 Agent」系列** —— 以 `nanoagent` 这组小而完整的 Python 示例为主线，逐层拆解 Agent 的核心结构。
 >
 > - [第一篇：最小闭环与工具调用](../01-essence/agent-essence.md) —— 工具 + 循环
-> - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 206 行
-> - [第三篇：Rules、Skills 与 MCP](../03-skills-mcp/agent-skills-mcp.md) —— 282 行
-> - [第四篇：SubAgent 子智能体](../04-subagent/agent-subagent.md) —— 192 行
-> - [第五篇：多智能体协作与编排](../05-teams/agent-teams.md) —— 270 行
-> - **第六篇：上下文压缩**（本文）—— 169 行
-> - [第七篇：安全与权限控制](../07-safety/agent-safe.md) —— 219 行
+> - [第二篇：记忆、规划与多步执行](../02-memory/agent-memory.md) —— 206 行
+> - [第三篇：Rules、Skills、MCP 与可配置能力](../03-skills-mcp/agent-skills-mcp.md) —— 282 行
+> - [第四篇：SubAgent 与独立上下文委派](../04-subagent/agent-subagent.md) —— 192 行
+> - [第五篇：持久智能体与团队协作](../05-teams/agent-teams.md) —— 270 行
+> - **第六篇：上下文压缩与长任务续航**（本文）—— 169 行
+> - [第七篇：执行边界、安全确认与 Hook 化](../07-safety/agent-safe.md) —— 219 行
 
-前五篇我们不断给 Agent 加能力：工具、记忆、规划、Rules、SubAgent、Teams……但有一个问题我们一直在回避：**Agent 的对话历史会无限增长，直到撑爆 LLM 的 context window。**
+前五篇我们不断给 Agent 加能力：工具、记忆、规划、Rules、SubAgent、Teams……但有一个问题一直没正面处理：**对话历史会无限增长，直到撑爆 LLM 的 context window。**
 
-这不是"将来可能遇到的问题"，而是"用 Agent 干稍微复杂点的活就一定会遇到的问题"。
+这不是“以后可能会遇到”的问题，而是“只要任务稍微复杂一点就会撞上”的问题。
 
-今天我们回到 agent-essence.py 的极简基础上，只加一个函数（约 30 行），实现最简单的上下文压缩。
+这一篇回到 `agent-essence.py` 的极简基础上，只加一个函数（约 30 行），实现最简单的上下文压缩。
 
 ## 本文聚焦
 
 - 对应脚本：[agent-compact.py](./agent-compact.py)
 - 当前仓库中的脚本行数：`169`
-- 这篇会回答三件事：
-- 为什么上下文问题不是“模型窗口够大就没事”
-- 压缩时为什么一定要同时保留摘要和最近消息
-- 最小 compaction 实现到底牺牲了什么、换来了什么
+- 核心问题 1：为什么上下文问题不是“模型窗口够大就没事”
+- 核心问题 2：压缩时为什么一定要同时保留摘要和最近消息
+- 核心问题 3：最小 compaction 实现到底牺牲了什么、换来了什么
 
 ---
 
@@ -288,7 +287,7 @@ nanoagent 的压缩是最朴素的实现。业界的方案更加精细：
 
 但前六篇一直在回答"Agent 能做什么"，有一个同样重要的问题我们还没回答："Agent 不能做什么？" 当 Agent 试图执行 `rm -rf /` 时，谁来踩刹车？
 
-这就是 [第七篇：安全与权限控制](../07-safety/agent-safe.md) 的主题：三道安全防线，让 Agent 从"裸奔"变成"有保险的"。
+这就是 [第七篇：执行边界、安全确认与 Hook 化](../07-safety/agent-safe.md) 的主题：三道安全防线，让 Agent 从“裸奔”变成“有保险地执行”。
 
 ---
 

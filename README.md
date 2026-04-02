@@ -2,20 +2,20 @@
 
 [中文说明](./README_CN.md)
 
-`nanoagent` is a source-first repository for learning how agent capabilities accumulate in small Python programs.
+`nanoagent` is a source-first learning repository for studying how agent capabilities accumulate in small Python programs.
 
-This repository is useful for two reasons:
+It is useful for two kinds of reading:
 
-- it preserves a chapter-by-chapter implementation path from minimal tool calling to safety controls
-- it also includes an independent set of integration notes under [`docs/integration-thinking/`](./docs/integration-thinking/)
+- a chapter-by-chapter code path, from minimal tool calling to safety controls
+- a parallel set of local notes under [`docs/integration-thinking/`](./docs/integration-thinking/) for readers who want the integrated view first
 
-It is not a production framework. It is a compact reference for understanding what an agent actually needs in order to act, remember, delegate, coordinate, compress context, and stay inside basic guardrails.
+This repository is not a production framework. It is a compact reference for understanding what an agent actually needs in order to act, remember, delegate, coordinate, compress context, and stay inside basic guardrails.
 
 ## Reading Paths
 
-### Path A: follow the code evolution
+### Path A: follow the implementation path
 
-Read the repository in order if you want to see one capability added at a time:
+Read in order if you want to see one capability added at a time:
 
 1. `01-essence`
 2. `02-memory`
@@ -26,13 +26,13 @@ Read the repository in order if you want to see one capability added at a time:
 7. `07-safety`
 8. `full`
 
-### Path B: start from the integrated view
+### Path B: start from the full picture
 
-If you already know the basics and want the full picture first:
+If you already know the basics, start here:
 
 1. read `full/agent-full.py`
 2. read the integration notes in [`docs/integration-thinking/`](./docs/integration-thinking/)
-3. backtrack into individual chapters for the implementation details
+3. return to individual chapters for the implementation details
 
 ## Repository Map
 
@@ -49,8 +49,8 @@ If you already know the basics and want the full picture first:
 
 ### Companion documents
 
-- `01-essence/agent-essence.md` to `07-safety/agent-safe.md`: chapter-by-chapter explanations
-- `tech-sharing/tech-sharing.md`: long-form sharing deck in Markdown form
+- `01-essence/agent-essence.md` to `07-safety/agent-safe.md`: chapter-by-chapter code explanations
+- `tech-sharing/tech-sharing.md`: long-form Markdown talk track for the whole series
 - [`docs/integration-thinking/README.md`](./docs/integration-thinking/README.md): index of local integration notes
 - [`docs/integration-thinking/chapter-notes.zh-CN.md`](./docs/integration-thinking/chapter-notes.zh-CN.md): chapter-based study notes
 - [`docs/integration-thinking/architecture.zh-CN.md`](./docs/integration-thinking/architecture.zh-CN.md): architecture summary of the full progression
@@ -60,7 +60,7 @@ If you already know the basics and want the full picture first:
 - `bonus/`: extra patterns such as commands and preset agents
 - `real-mcp/`: minimal HTTP-based MCP example
 - `nano-skill/`: notes and examples focused on skills
-- `tests/`: mock-driven examples and legacy test artifacts
+- `tests/`: small examples plus legacy test artifacts
 
 ## What Each Stage Adds
 
@@ -177,7 +177,7 @@ python full/agent-full.py --team "your task"
 
 ## Installation
 
-Install the declared dependency:
+Install the minimal dependency set:
 
 ```bash
 pip install -r requirements.txt

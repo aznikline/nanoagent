@@ -3,27 +3,26 @@
 > **「从零开始理解 Agent」系列** —— 以 `nanoagent` 这组小而完整的 Python 示例为主线，逐层拆解 Agent 的核心结构。
 >
 > - [第一篇：最小闭环与工具调用](../01-essence/agent-essence.md) —— 工具 + 循环
-> - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 206 行
-> - **第三篇：Rules、Skills 与 MCP**（本文）—— 282 行
-> - [第四篇：SubAgent 子智能体](../04-subagent/agent-subagent.md) —— 192 行
-> - [第五篇：多智能体协作与编排](../05-teams/agent-teams.md) —— 270 行
-> - [第六篇：上下文压缩](../06-compact/agent-compact.md) —— 169 行
-> - [第七篇：安全与权限控制](../07-safety/agent-safe.md) —— 219 行
+> - [第二篇：记忆、规划与多步执行](../02-memory/agent-memory.md) —— 206 行
+> - **第三篇：Rules、Skills、MCP 与可配置能力**（本文）—— 282 行
+> - [第四篇：SubAgent 与独立上下文委派](../04-subagent/agent-subagent.md) —— 192 行
+> - [第五篇：持久智能体与团队协作](../05-teams/agent-teams.md) —— 270 行
+> - [第六篇：上下文压缩与长任务续航](../06-compact/agent-compact.md) —— 169 行
+> - [第七篇：执行边界、安全确认与 Hook 化](../07-safety/agent-safe.md) —— 219 行
 
-在前两篇中，我们一步步构建了 Agent 的核心能力：[第一篇](../01-essence/agent-essence.md)搭好了"工具 + 循环"的地基；[第二篇](../02-memory/agent-memory.md)把记忆和规划补了上去。
+前两篇已经把 Agent 的地基搭出来了：[第一篇](../01-essence/agent-essence.md)解决“工具 + 循环”，[第二篇](../02-memory/agent-memory.md)补上记忆和规划。
 
-但在第二篇结尾，我们留下了三个未解之谜：工具是硬编码的，没有行为约束，规划是被动触发的。
+但到这里，系统还带着三个明显限制：工具是硬编码的，没有行为约束，规划也还是被动触发的。
 
-今天我们继续往前走，看 [agent-skills-mcp.py](./agent-skills-mcp.py)（当前仓库中 `282` 行）。这一章真正要解决的不是“再加几个工具”，而是怎样把 Agent 的行为约束、能力扩展和外部工具接入从硬编码里拆出来，变成可配置结构。
+这一篇看 [agent-skills-mcp.py](./agent-skills-mcp.py)（当前仓库中 `282` 行）。这一章真正要解决的不是“再加几个工具”，而是怎样把行为约束、能力扩展和外部工具接入从硬编码里拆出来，变成可配置结构。
 
 ## 本文聚焦
 
 - 对应脚本：[agent-skills-mcp.py](./agent-skills-mcp.py)
 - 当前仓库中的脚本行数：`282`
-- 这篇会回答三件事：
-- Rules、Skills、MCP 为什么是三个不同层次的问题
-- 一个 Agent 为什么需要“知道什么”和“能做什么”两条独立扩展线
-- 规划为什么最好也被视为工具，而不是额外开关
+- 核心问题 1：Rules、Skills、MCP 为什么是三个不同层次的问题
+- 核心问题 2：一个 Agent 为什么需要“知道什么”和“能做什么”两条独立扩展线
+- 核心问题 3：规划为什么最好也被视为工具，而不是额外开关
 
 | 未解问题 | 解决方案 | 新概念 |
 |---------|---------|--------|
@@ -504,9 +503,9 @@ def run_agent_claudecode(task, use_plan=False):
 | agent-memory.py | 206 | 记忆 + 规划 | Agent 的时间维度——记住过去、规划未来 |
 | agent-skills-mcp.py | 282 | Rules + Skills + MCP | Agent 的空间维度——扩展知识与工具 |
 
-如果你跟着这三篇走到这里，已经能看清一个重要分界线：前两篇解决的是“Agent 能不能持续工作”，而这一篇开始解决“Agent 能不能被项目真正使用”。但还有一个问题没碰：当任务复杂到一个 Agent 忙不过来时怎么办？能不能把局部任务直接分出去？
+如果你跟着这三篇走到这里，已经能看清一个分界线：前两篇解决的是“Agent 能不能持续工作”，这一篇开始解决“Agent 能不能被项目真正使用”。但还有一个问题没碰：当任务复杂到一个 Agent 忙不过来时，局部任务能不能直接分出去？
 
-这就是多智能体协作——SubAgent 的领域。在 [第四篇：SubAgent 子智能体](../04-subagent/agent-subagent.md) 中，我们将用不到 30 行新增代码，让主 Agent 学会"分工派活"。
+这个问题把我们带到多智能体协作里最轻的一层，也就是 SubAgent。在 [第四篇：SubAgent 与独立上下文委派](../04-subagent/agent-subagent.md) 中，我们会看到主 Agent 如何把局部任务直接分出去。
 
 > *"The question is not what you look at, but what you see."* — Henry David Thoreau
 >
@@ -514,4 +513,4 @@ def run_agent_claudecode(task, use_plan=False):
 
 ---
 
-*本文基于本仓库中的 [agent-skills-mcp.py](./agent-skills-mcp.py) 分析。完整系列：[第一篇：最小闭环与工具调用](../01-essence/agent-essence.md) → [第二篇：记忆与规划](../02-memory/agent-memory.md) → 第三篇：Rules、Skills 与 MCP（本文） → [第四篇：SubAgent 子智能体](../04-subagent/agent-subagent.md)*
+*本文基于本仓库中的 [agent-skills-mcp.py](./agent-skills-mcp.py) 分析。完整系列：[第一篇：最小闭环与工具调用](../01-essence/agent-essence.md) → [第二篇：记忆、规划与多步执行](../02-memory/agent-memory.md) → 第三篇：Rules、Skills、MCP 与可配置能力（本文） → [第四篇：SubAgent 与独立上下文委派](../04-subagent/agent-subagent.md)*

