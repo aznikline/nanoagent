@@ -4,16 +4,16 @@
 
 `nanoagent` 是一个按源码递进组织的 Agent 学习仓库。它的价值不在于“拿来即上生产”，而在于把 Agent 的关键能力拆成一层层可阅读、可运行、可对照的 Python 实现。
 
-这个仓库现在保留了两条阅读主线：
+这个仓库适合两种读法：
 
-- 一条是按章节推进的源码主线，适合顺着能力演进去理解实现
-- 一条是独立放在 [`docs/integration-thinking/`](./docs/integration-thinking/) 里的整合思考，适合先建立整体判断再回看代码
+- 顺着章节推进，直接看能力是怎么一层层长出来的
+- 先读 [`docs/integration-thinking/`](./docs/integration-thinking/)，先建立整体判断，再回到源码细节
 
-如果你想理解一个 Agent 为什么需要循环、记忆、委派、协作、压缩和安全边界，这个仓库足够清楚。如果你想直接拿它当成熟框架，它还不够完整。
+如果你想理解一个 Agent 为什么需要循环、记忆、委派、协作、压缩和安全边界，这个仓库已经足够清楚。如果你想直接把它当成成熟框架，它还不完整。
 
 ## 阅读路径
 
-### 路线 A：按能力递进读源码
+### 路线 A：按实现路径读源码
 
 如果你希望沿着“功能是怎么长出来的”这条线阅读，建议顺序是：
 
@@ -26,7 +26,7 @@
 7. `07-safety`
 8. `full`
 
-### 路线 B：先看整体，再回到章节
+### 路线 B：先看全景，再回到章节
 
 如果你已经熟悉基本概念，更适合先看：
 
@@ -49,8 +49,8 @@
 
 ### 配套文档
 
-- `01-essence/agent-essence.md` 到 `07-safety/agent-safe.md`：逐章解释设计思路和源码
-- `tech-sharing/tech-sharing.md`：偏分享稿风格的总览材料
+- `01-essence/agent-essence.md` 到 `07-safety/agent-safe.md`：逐章解释源码和设计取舍
+- `tech-sharing/tech-sharing.md`：整套内容的 Markdown 版分享稿
 - [`docs/integration-thinking/README.md`](./docs/integration-thinking/README.md)：整合思考目录
 - [`docs/integration-thinking/chapter-notes.zh-CN.md`](./docs/integration-thinking/chapter-notes.zh-CN.md)：按章节拆解的学习笔记
 - [`docs/integration-thinking/architecture.zh-CN.md`](./docs/integration-thinking/architecture.zh-CN.md)：从整体能力演进角度做的架构总结
@@ -60,7 +60,7 @@
 - `bonus/`：补充模式，例如 commands 和 preset agents
 - `real-mcp/`：一个最小 HTTP MCP 示例
 - `nano-skill/`：Skill 相关说明与示例
-- `tests/`：示例测试和遗留测试资产
+- `tests/`：小型示例测试和遗留测试资产
 
 ## 每一阶段到底增加了什么
 
@@ -157,7 +157,7 @@
 
 ### Full 集成版
 
-`full/agent-full.py` 把前面章节的能力收拢成一个脚本：
+`full/agent-full.py` 把前面章节的能力收拢进一个脚本：
 
 - 文件与 shell 工具
 - memory
@@ -177,7 +177,7 @@ python full/agent-full.py --team "你的任务"
 
 ## 安装
 
-当前声明的依赖只有：
+当前最小依赖只有：
 
 ```bash
 pip install -r requirements.txt

@@ -3,18 +3,18 @@
 > **「从零开始理解 Agent」系列** —— 以 `nanoagent` 这组小而完整的 Python 示例为主线，逐层拆解 Agent 的核心结构。
 >
 > - [第一篇：最小闭环与工具调用](../01-essence/agent-essence.md) —— 工具 + 循环
-> - [第二篇：记忆与规划](../02-memory/agent-memory.md) —— 206 行
-> - [第三篇：Rules、Skills 与 MCP](../03-skills-mcp/agent-skills-mcp.md) —— 282 行
-> - **第四篇：最简 SubAgent 实现**（本文）—— 192 行
-> - [第五篇：多智能体协作与编排](../05-teams/agent-teams.md) —— 270 行
-> - [第六篇：上下文压缩](../06-compact/agent-compact.md) —— 169 行
-> - [第七篇：安全与权限控制](../07-safety/agent-safe.md) —— 219 行
+> - [第二篇：记忆、规划与多步执行](../02-memory/agent-memory.md) —— 206 行
+> - [第三篇：Rules、Skills、MCP 与可配置能力](../03-skills-mcp/agent-skills-mcp.md) —— 282 行
+> - **第四篇：SubAgent 与独立上下文委派**（本文）—— 192 行
+> - [第五篇：持久智能体与团队协作](../05-teams/agent-teams.md) —— 270 行
+> - [第六篇：上下文压缩与长任务续航](../06-compact/agent-compact.md) —— 169 行
+> - [第七篇：执行边界、安全确认与 Hook 化](../07-safety/agent-safe.md) —— 219 行
 
-前三篇把 Agent 从“会调工具”一路推进到了“有记忆、会规划、能配置”。但到目前为止，所有版本都还停留在一个前提上：**永远只有一个 Agent 在干活**。
+前三篇把 Agent 从“会调工具”一路推进到了“有记忆、会规划、能配置”。但到目前为止，所有版本都还停留在同一个前提上：**永远只有一个 Agent 在干活**。
 
-想象一下这个场景：你让 Agent "搭建一个博客系统，前端用 React，后端用 FastAPI，数据库用 SQLite"。一个 Agent 要同时精通前端、后端、数据库——它可以做到，但很容易顾此失彼，上下文越来越长，后面写前端的时候把前面后端的细节忘了。
+一旦任务开始分工，比如“搭一个博客系统，前端用 React，后端用 FastAPI，数据库用 SQLite”，单个 Agent 就很容易顾此失彼：上下文越来越长，前后端细节互相挤占，后面写前端时已经把前面后端的约束忘掉了。
 
-现实中我们怎么解决这类问题？**找帮手，分工合作。**
+现实里解决这类问题的方法很朴素：**找帮手，分工合作。**
 
 这就是 SubAgent（子智能体）的核心思想：主 Agent 作为协调者，把局部任务委派给拥有不同专业身份的执行单元，各管一块，互不干扰。
 
@@ -22,10 +22,9 @@
 
 - 对应脚本：[agent-subagent.py](./agent-subagent.py)
 - 当前仓库中的脚本行数：`192`
-- 这篇会回答三件事：
-- SubAgent 和普通工具调用为什么在协议层面没有本质差别
-- 为什么委派时最重要的是独立上下文，而不是“多开一个模型”
-- 为什么 SubAgent 天生适合一次性任务，而不适合长期协作
+- 核心问题 1：SubAgent 和普通工具调用为什么在协议层面没有本质差别
+- 核心问题 2：为什么委派时最重要的是独立上下文，而不是“多开一个模型”
+- 核心问题 3：为什么 SubAgent 天生适合一次性任务，而不适合长期协作
 
 ---
 
@@ -344,8 +343,8 @@ SubAgent 和 Plan 最大的区别：
 
 但 SubAgent 的"一次性"本质也带来了局限：它们之间无法通信，不记得上次做了什么，无法被多次调用。当任务需要真正的团队协作——你写完我来接、测出 bug 你去改、改完我再测——就需要把临时工升级为正式员工。
 
-这就是 [第五篇：多智能体协作与编排](../05-teams/agent-teams.md) 的主题：用两个类（`Agent` + `Team`）实现持久记忆、身份管理和通信通道。
+这就是 [第五篇：持久智能体与团队协作](../05-teams/agent-teams.md) 的主题：用两个类（`Agent` + `Team`）实现持久记忆、身份管理和通信通道。
 
 ---
 
-*本文基于本仓库中的架构扩展实现分析。完整系列：[第一篇：最小闭环与工具调用](../01-essence/agent-essence.md) → [第二篇：记忆与规划](../02-memory/agent-memory.md) → [第三篇：Rules、Skills 与 MCP](../03-skills-mcp/agent-skills-mcp.md) → 第四篇：SubAgent（本文） → [第五篇：多智能体协作](../05-teams/agent-teams.md)*
+*本文基于本仓库中的架构扩展实现分析。完整系列：[第一篇：最小闭环与工具调用](../01-essence/agent-essence.md) → [第二篇：记忆、规划与多步执行](../02-memory/agent-memory.md) → [第三篇：Rules、Skills、MCP 与可配置能力](../03-skills-mcp/agent-skills-mcp.md) → 第四篇：SubAgent 与独立上下文委派（本文） → [第五篇：持久智能体与团队协作](../05-teams/agent-teams.md)*
