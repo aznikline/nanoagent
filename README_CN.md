@@ -1,6 +1,11 @@
 # nanoagent
 
-[English](./README.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
+[![Stars](https://img.shields.io/github/stars/aznikline/nanoagent?style=social)](https://github.com/aznikline/nanoagent)
+[![English](https://img.shields.io/badge/English-README.md-blue.svg)](./README.md)
+
+> **如果你能读懂 ~100 行 Python，你就能理解 Agent。**
 
 `nanoagent` 是一个按源码递进组织的 Agent 学习仓库。它的价值不在于“拿来即上生产”，而在于把 Agent 的关键能力拆成一层层可阅读、可运行、可对照的 Python 实现。
 
@@ -252,13 +257,16 @@ python 07-safety/agent-safe.py "列出当前目录文件"
 
 它们不存在时，代码通常会回退到默认行为继续执行。
 
-## 测试与验证说明
+## 测试与验证
 
-当前仓库状态需要注意这几点：
+仓库提供两个可直接运行的冒烟测试，内部 mock 了 LLM 客户端，因此**无需 API Key、无需安装 `openai`**：
 
-- `tests/test_compact.py` 和 `tests/test_subagent.py` 是基于 mock 的示例测试
-- `tests/test_agent.py` 依赖 `agent.py` 和 `agent-plus.py`，但这两个文件当前不在仓库中
-- 当前环境没有安装 `pytest`，因此 `python3 -m pytest -q tests` 不能直接运行
+```bash
+python tests/test_compact.py     # 验证上下文压缩触发与最近消息保留
+python tests/test_subagent.py    # 验证 主Agent → 子Agent → 返回 的完整委派链路
+```
+
+它们是可执行脚本（print + assert），不是 pytest 函数——**不要**用 `python3 -m pytest -q tests` 运行。历史上的 `tests/test_agent.py` 已移除：它引用的 `agent.py` / `agent-plus.py` / `agent-claudecode.py` 从未存在于本仓库。
 
 ## 适用边界
 

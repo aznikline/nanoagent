@@ -74,7 +74,7 @@ fake_openai.OpenAI = MockOpenAI
 sys.modules["openai"] = fake_openai
 
 # 现在可以安全导入了
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "04-subagent"))
 agent = __import__("agent-subagent")
 
 # ==================== 测试 ====================

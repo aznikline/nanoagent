@@ -60,7 +60,7 @@ sys.modules["openai"] = fake_openai
 
 # Import the module
 import importlib, os
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "06-compact"))
 agent = importlib.import_module("agent-compact")
 
 # ==================== Tests ====================

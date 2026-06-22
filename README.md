@@ -1,6 +1,11 @@
 # nanoagent
 
-[中文说明](./README_CN.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
+[![Stars](https://img.shields.io/github/stars/aznikline/nanoagent?style=social)](https://github.com/aznikline/nanoagent)
+[![中文说明](https://img.shields.io/badge/%E4%B8%AD%E6%96%87-README_CN-red.svg)](./README_CN.md)
+
+> **If you can read ~100 lines of Python, you understand agents.**
 
 `nanoagent` is a source-first learning repository for studying how agent capabilities accumulate in small Python programs.
 
@@ -252,13 +257,16 @@ Some chapters optionally read local files such as:
 
 If these files do not exist, the code usually falls back cleanly and continues.
 
-## Tests and Validation Notes
+## Tests and Validation
 
-Current repository state:
+The repo ships two runnable smoke tests that mock the LLM client, so they need **no API key and no `openai` install**:
 
-- `tests/test_compact.py` and `tests/test_subagent.py` are mock-driven examples
-- `tests/test_agent.py` references `agent.py` and `agent-plus.py`, which are not present in the current tree
-- `pytest` is not installed in the current environment, so `python3 -m pytest -q tests` is not runnable here without extra setup
+```bash
+python tests/test_compact.py     # verifies context-compaction triggers & keeps recent messages
+python tests/test_subagent.py    # verifies the main → subagent → return delegation loop
+```
+
+These are executable scripts (print + assert), not pytest functions — `python3 -m pytest -q tests` is **not** the way to run them. A historical `tests/test_agent.py` was removed: it referenced `agent.py` / `agent-plus.py` / `agent-claudecode.py`, which were never present in the tree.
 
 ## Boundaries
 
