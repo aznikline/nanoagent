@@ -180,6 +180,10 @@ python full/agent-full.py --auto "your task"
 python full/agent-full.py --team "your task"
 ```
 
+## As a Cursor rule
+
+nanoagent is also packaged as an [agent-requested Cursor rule](./cursor-rules/nanoagent-agent-guide.mdc). Drop it in your `.cursor/rules/` (or `.github/copilot-instructions.md` for Copilot) and when you ask Cursor about agent internals — tool calling, memory, subagents, teams, compaction, safety — it routes you to the matching ~100-line chapter here instead of a framework abstraction.
+
 ## Installation
 
 Install the minimal dependency set:
